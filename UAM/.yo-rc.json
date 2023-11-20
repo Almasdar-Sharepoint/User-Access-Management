@@ -1,0 +1,21 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "plusBeta": false,
+    "isCreatingSolution": true,
+    "nodeVersion": "14.18.2",
+    "sdksVersions": {
+      "@microsoft/microsoft-graph-client": "3.0.2",
+      "@microsoft/teams-js": "2.4.1"
+    },
+    "version": "1.16.1",
+    "libraryName": "user-access-management",
+    "libraryId": "d7200b06-a263-407c-8523-29b34a355e56",
+    "environment": "spo",
+    "packageManager": "npm",
+    "solutionName": "UserAccessManagement",
+    "solutionShortDescription": "UserAccessManagement description",
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "componentType": "webpart"
+  }
+}

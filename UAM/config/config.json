@@ -1,0 +1,19 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "user-access-management-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/userAccessManagement/UserAccessManagementWebPart.js",
+          "manifest": "./src/webparts/userAccessManagement/UserAccessManagementWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "UserAccessManagementWebPartStrings": "lib/webparts/userAccessManagement/loc/{locale}.js",
+    "ControlStrings": "node_modules/@pnp/spfx-controls-react/lib/loc/{locale}.js"
+  }
+}

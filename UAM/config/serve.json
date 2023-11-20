@@ -1,0 +1,6 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/spfx-serve.schema.json",
+  "port": 5430,
+  "https": false,
+  "initialPage": "https://acuvatehyd.sharepoint.com/sites/Al-masdar/_layouts/workbench.aspx"
+}

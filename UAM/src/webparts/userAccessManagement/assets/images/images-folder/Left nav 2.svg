@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="72" height="72" viewBox="0 0 72 72">
+  <defs>
+    <filter id="Rectangle_1217" x="0" y="0" width="72" height="72" filterUnits="userSpaceOnUse">
+      <feOffset dy="3" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feFlood flood-opacity="0.078"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Left_nav_2" data-name="Left nav 2" transform="translate(1 -151)">
+    <g transform="matrix(1, 0, 0, 1, -1, 151)" filter="url(#Rectangle_1217)">
+      <rect id="Rectangle_1217-2" data-name="Rectangle 1217" width="36" height="36" rx="6" transform="translate(18 15)" fill="#fff"/>
+    </g>
+    <path id="Path_178" data-name="Path 178" d="M16.2,4A1.8,1.8,0,0,1,18,5.8V15a1.8,1.8,0,0,1-1.8,1.8H3.8A1.8,1.8,0,0,1,2,15V5.8A1.8,1.8,0,0,1,3.8,4Zm0,1.2H3.8a.6.6,0,0,0-.6.6V15a.6.6,0,0,0,.6.6H16.2a.6.6,0,0,0,.6-.6V5.8A.6.6,0,0,0,16.2,5.2Zm-8,5.6a.6.6,0,0,1,.6.6v.394l-.006.086c-.13.89-.875,1.32-1.994,1.32s-1.864-.43-1.994-1.32L4.8,11.793V11.4a.6.6,0,0,1,.6-.6Zm2.8.4h3.6a.6.6,0,0,1,.082,1.194L14.6,12.4H11A.6.6,0,0,1,10.92,11.2L11,11.2h0ZM6.8,7.6A1.2,1.2,0,1,1,5.6,8.8,1.2,1.2,0,0,1,6.8,7.6Zm4.2.8h3.6a.6.6,0,0,1,.082,1.194L14.6,9.6H11a.6.6,0,0,1-.082-1.194L11,8.4h0Z" transform="translate(25 174)" fill="#a0a0a0"/>
+  </g>
+</svg>

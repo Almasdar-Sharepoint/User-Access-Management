@@ -1,0 +1,41 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "user-access-management-client-side-solution",
+    "id": "d7200b06-a263-407c-8523-29b34a355e56",
+    "version": "1.0.0.1",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "webApiPermissionRequests": [{"scope": "user_impersonation","resource": "e2c53e44-d47e-4d8d-8a24-fe222074c7d3"},{"scope": "access_as_application","resource": "e2c53e44-d47e-4d8d-8a24-fe222074c7d3"}],
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "",
+      "websiteUrl": "",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.16.1"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "UserAccessManagement description"
+      },
+      "longDescription": {
+        "default": "UserAccessManagement description"
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "user-access-management Feature",
+        "description": "The feature that activates elements of the user-access-management solution.",
+        "id": "e35f3ccb-6ac0-42db-a57a-aa4f60d94d02",
+        "version": "1.0.0.0"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/user-access-management.sppkg"
+  }
+}
