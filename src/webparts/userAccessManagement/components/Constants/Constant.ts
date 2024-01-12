@@ -6,4 +6,5 @@ public static var = ""
 
  
 public static AccessToken = "";
+public static PowerBiReport="";
 }

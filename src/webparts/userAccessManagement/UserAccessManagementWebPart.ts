@@ -249,6 +249,11 @@ export default class UserAccessManagementWebPart extends BaseClientSideWebPart<I
                 Constants.var = responseJSON.value[i].WebAPiURL.Url;
 
               }
+              else if(check === "UAMPowerBIUrl")
+              {
+                Constants.PowerBiReport = responseJSON.value[i].WebAPiURL.Url
+                console.log(Constants.PowerBiReport,"power bi report")
+              }
             
           }
           //constants.shariaResearchWebapi =responseJSON.value[0].WebAPiURL.Url;

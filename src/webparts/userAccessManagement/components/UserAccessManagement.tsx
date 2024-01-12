@@ -326,7 +326,14 @@ export default class UserAccessManagement extends React.Component<
     });
   }
 
+  // public async GetPowerBiUrl() {
+  //   let apiURL = `${this.props.siteUrl}/_api/lists/GetByTitle('ADAuthentication')/items?$select=Title,Value`;
+  //   await this.props.context.spHttpClient.get(apiURL, SPHttpClient.configurations.v1).then((response: SPHttpClientResponse) => {
+  //     response.json().then(async (responseJSON: any) => {
 
+  //     });
+  //   });
+  // }
 
   headerNav() {
     document.getElementById("hideHeaderNav").classList.toggle("d-none");
@@ -1575,8 +1582,11 @@ export default class UserAccessManagement extends React.Component<
                         className="pull-right mb-0 ps-3 ms-6 pt-2 d-lg-block d-none mt-2"
                         id="hideHeaderNav"
                       >
-                        <li className="upper-links default-active"><a className="links fontsize-16 mb-0 mt-1" href="#">HOME</a>
+                        <li className="upper-links default-active active"><a className="links fontsize-16 mb-0 mt-1" href="#">HOME</a>
                         </li>
+                        {Constants.PowerBiReport!=""&& <li className="upper-links default-active"><a className="links fontsize-16 mb-0 mt-1" onClick={()=>this.openpowerBI()}>REPORTS</a>
+                        </li> }
+                       
                         {/* <li className="upper-links"><a className="links fontsize-16 mb-0 mt-1" href="#/createrequest/NewRequest">Create Request</a>
                     </li> */}
 
@@ -3548,6 +3558,28 @@ export default class UserAccessManagement extends React.Component<
         failure(error);
       }
     });
+  }
+
+
+  openpowerBI=()=>
+  {
+    try {
+     
+      let a = document.createElement("a");
+      a.href =Constants.PowerBiReport
+
+      console.log(Constants.PowerBiReport,"power bi url")
+     
+      document.body.appendChild(a);
+
+      a.click();
+
+      document.body.removeChild(a);
+
+      document
+        .querySelector("[data-automation-id=contentScrollRegion]")
+        .scroll({ top: 0, behavior: "smooth" });
+    } catch (ex) { }
   }
 
 
