@@ -1558,11 +1558,11 @@ export default class UserAccessManagement extends React.Component<
           <div className="wrapper help-desk-Homepage toggled">
 
             <header className="row flex-wrap align-items-center justify-content-center justify-content-md-center border-bottom bg-primary-8 h-55 px-5 w-100 m-0 pe-0 position-fixed z-index-9 ps-0">
-              <div id="flipkart-navbar" className="bg-primary-8">
+              <div id="flipkart-navbar" className="UAM-header">
                 <div className="container-fluid mt-1">
                   <div className="d-flex justify-content-between">
-
-                    <div className="sidebar-header bg-primary-8 border-0">
+ 
+                    <div className="sidebar-header border-0">
                       <div className="toggle-icon ms-1 d-flex align-items-center">
                         {" "}
                         <button
@@ -1573,7 +1573,7 @@ export default class UserAccessManagement extends React.Component<
                             <span className="hamburger-inner"></span>
                           </span>
                         </button>
-                      </div>
+                      </div> 
                     </div>
 
 
@@ -1582,9 +1582,9 @@ export default class UserAccessManagement extends React.Component<
                         className="pull-right mb-0 ps-3 ms-6 pt-2 d-lg-block d-none mt-2"
                         id="hideHeaderNav"
                       >
-                        <li className="upper-links default-active active"><a className="links fontsize-16 mb-0 mt-1" href="#">HOME</a>
+                        <li className="upper-links default-active active"><a className="links mb-0 mt-1" href="#">HOME</a>
                         </li>
-                        {Constants.PowerBiReport!=""&& <li className="upper-links default-active"><a className="links fontsize-16 mb-0 mt-1" onClick={()=>this.openpowerBI()}>REPORTS</a>
+                        {Constants.PowerBiReport!=""&& <li className="upper-links default-active"><a className="links mb-0 mt-1" onClick={()=>this.openpowerBI()}>REPORTS</a>
                         </li> }
                        
                         {/* <li className="upper-links"><a className="links fontsize-16 mb-0 mt-1" href="#/createrequest/NewRequest">Create Request</a>
@@ -1774,16 +1774,17 @@ export default class UserAccessManagement extends React.Component<
                 <div className="simplebar-height-auto-observer-wrapper">
                   <div className="simplebar-height-auto-observer">
                   </div>
-                </div>
-                <div className="simplebar-mask">
+                </div> 
+                <div className="simplebar-mask"> 
+
                   <div className="simplebar-offset">
                     <div className="simplebar-content-wrapper">
-                      <div className="simplebar-content">
+                      <div className="simplebar-content"> 
                         <ul className="metismenu h-100" id="menu">
-                          <li className="menu-item sub-menu">
+                          <li className="menu-item sub-menu pt-2">
                             <a
                               href="javascript:;"
-                              className="menu-link has-arrow p-2 text-decoration-none ms-2"
+                              className="menu-link has-arrow p-1 text-decoration-none ms-1"
                             >
                               <div className="parent-icon shadow p-1 shadow rounded">
                                 <img
@@ -1799,7 +1800,7 @@ export default class UserAccessManagement extends React.Component<
                               </div>
                             </a>
                             <ul className="submenu-dropdown ms-3">
-                              <li className="menu-item fontsize-14 ">
+                              <li className="menu-item">
                                 <a
                                   // href={this.state.HelpdeskUrl} target="_blank" data-interception="off"
                                   onClick={() => this.openHelpdesk()}
@@ -1819,7 +1820,7 @@ export default class UserAccessManagement extends React.Component<
                                 </a>
                               </li>
                               {this.state.IsUserShariaResearch.includes("Helpdesk Manager-Sharia Research") || this.state.IsUserShariaResearch.includes("ISCG Staff - Sharia Research") || this.state.IsUserShariaResearch.includes("Master Data Admin - Sharia Research") ?
-                                <li className="menu-item fontsize-14 ">
+                                <li className="menu-item">
                                   <a
                                     // href="https://adibcloud.sharepoint.com/sites/Shariaresearch-uat" target="_blank" data-interception="off"
                                     onClick={() => this.openShariaReasearch()}
@@ -1841,7 +1842,7 @@ export default class UserAccessManagement extends React.Component<
 
                               {this.state.IsUserTawazun.includes("Maker - Tawazun") || this.state.IsUserTawazun.includes("Checker - Tawazun") || this.state.IsUserTawazun.includes("Master Data Admin - Tawazun") ?
 
-                                <li className="menu-item fontsize-16">
+                                <li className="menu-item">
                                   <a
                                     // href="index.html" target="_blank" data-interception="off"
                                     onClick={() => this.openTawazun()}
@@ -1856,7 +1857,7 @@ export default class UserAccessManagement extends React.Component<
                                         className="submenu-iconz"
                                       />
                                     </div>
-                                    <div className="menu-title bliss2M fontsize-16 ms-3">
+                                    <div className="menu-title bliss2M fontsize-16 ms-4">
                                       Tawazun
                                     </div>
                                   </a>
@@ -1865,7 +1866,7 @@ export default class UserAccessManagement extends React.Component<
 
                               {this.state.IsUserApex.includes("Maker - Apex") || this.state.IsUserApex.includes("Checker - Apex") || this.state.IsUserApex.includes("Master Data Admin - Apex") ?
 
-                                <li className="menu-item fontsize-15">
+                                <li className="menu-item">
                                   <a
                                     // href="index.html" target="_blank" data-interception="off"
                                     onClick={() => this.openapex()}
@@ -1880,7 +1881,7 @@ export default class UserAccessManagement extends React.Component<
                                         className="submenu-iconz"
                                       />
                                     </div>
-                                    <div className="menu-title bliss2M fontsize-16 ms-3">
+                                    <div className="menu-title bliss2M fontsize-16 ms-4 ps-2">
                                       Apex
                                     </div>
                                   </a>
@@ -1889,7 +1890,7 @@ export default class UserAccessManagement extends React.Component<
 
                               {this.state.IsVertex.includes("Maker - SAM") || this.state.IsVertex.includes("Checker - SAM") || this.state.IsVertex.includes("Master Data Admin - SAM") ?
 
-                                <li className="menu-item fontsize-16">
+                                <li className="menu-item">
                                   <a
                                     // href="index.html" target="_blank" data-interception="off"
                                     onClick={() => this.openvertex()}
@@ -1904,7 +1905,7 @@ export default class UserAccessManagement extends React.Component<
                                         className="submenu-iconz"
                                       />
                                     </div>
-                                    <div className="menu-title bliss2M fontsize-16 ms-3">
+                                    <div className="menu-title bliss2M fontsize-16 ms-4">
                                       Vertex
                                     </div>
                                   </a>
@@ -1918,7 +1919,7 @@ export default class UserAccessManagement extends React.Component<
                           <li className="menu-item sub-menu">
                             <a
                               href="javascript:;"
-                              className="menu-link has-arrow p-2 ms-2"
+                              className="menu-link has-arrow p-1 ms-1"
                               data-bs-toggle="collapse"
                               data-bs-target="#second-collapse"
                               aria-expanded="false"
@@ -1939,11 +1940,11 @@ export default class UserAccessManagement extends React.Component<
                             </a>
 
                             <ul className="submenu-dropdown ms-2">
-                              <li className="menu-item fontsize-14">
+                              <li className="menu-item">
                                 <a
                                   // href="https://adibcloud.sharepoint.com/sites/elibrary-uat" target="_blank" data-interception="off"
                                   onClick={() => this.openElibrary()}
-                                  className="menu-link ps-3 text-decoration-none"
+                                  className="menu-link ps-2 text-decoration-none"
                                 >
                                   <div className="p-1 rounded">
                                     <img
@@ -1963,7 +1964,7 @@ export default class UserAccessManagement extends React.Component<
 
                               {this.state.IsUserRepository.includes("Auditor") || this.state.IsUserRepository.includes("ISCG Staff Admin") || this.state.IsUserRepository.includes("ISCG Staff") ?
 
-                                <li className="menu-item fontsize-14">
+                                <li className="menu-item ">
                                   <a
                                     // href="https://adibcloud.sharepoint.com/sites/Shariarepository-uat" target="_blank" data-interception="off"
                                     onClick={() => this.openREpository()}
@@ -1978,7 +1979,7 @@ export default class UserAccessManagement extends React.Component<
                                         className="submenu-iconz"
                                       />
                                     </div>
-                                    <div className="menu-title bliss2M fontsize-16 ms-3">
+                                    <div className="menu-title bliss2M fontsize-16 ms-4">
                                       Sharia Repository
                                     </div>
                                   </a>
@@ -2004,7 +2005,7 @@ export default class UserAccessManagement extends React.Component<
                                     className="h-26 w-26"
                                   />
                                 </div>
-                                <div className="menu-title bliss2M fontsize-18 ">
+                                <div className="menu-title bliss2M fontsize-18 ms-4">
                                   Souq Al Maal
                                 </div>
                               </a>
@@ -2283,8 +2284,8 @@ export default class UserAccessManagement extends React.Component<
                         <h5 className="mt-0 fontsize-24 text-white ms-2 bliss2M  mb-1 text-center text-md-end me-2">إدارة وصول المستخدم</h5>
                       </div>
                       <div className="px-4 pt-1 pb-3 arrow-on-hover d-md-flex justify-content-between banner-texxt">
-                        <p className="mb-0 fontsize-20 text-white ms-2 text-center text-md-start">Home / User Access Management</p>
-                        <p className="mb-0 fontsize-18 text-white ms-2 text-center text-md-end me-2">الرئيسية / إدارة وصول المستخدم</p>
+                        <p className="mb-0 fontsize-20 liss2R text-white ms-2 text-center text-md-start">Home / User Access Management</p>
+                        <p className="mb-0 fontsize-20 text-white ms-2 text-center text-md-end me-2">الرئيسية / إدارة وصول المستخدم</p>
                       </div>
                     </div>
                   </div>
