@@ -48,7 +48,6 @@ a {
 }
 
 /* Header */
-
 .top-header .navbar {
 	top: 0;
 	left: 0px;
@@ -61,8 +60,6 @@ a {
 	padding: 0 1.5rem;
 	transition: all .2s;
 }
-
-
 .top-header .navbar .top-navbar-right .nav-link {
 
 	color: #293445;
@@ -500,7 +497,7 @@ a {
 .sidebar-wrapper .metismenu a .parent-icon {
 	font-size: 18px;
 	line-height: 1;
-	margin: 2px !important;
+	padding: 8px !important;
 }
 
 .sidebar-wrapper .metismenu a .menu-title {
@@ -3121,12 +3118,10 @@ body {
 	display: inline-block;
 	padding: 0 11px;
 	line-height: 23px;
-	font-family: 'Roboto', sans-serif;
 	letter-spacing: 0;
 	color: inherit;
 	border: none;
 	outline: none;
-	font-size: 12px;
 }
 
 .dropdown {
@@ -4349,7 +4344,6 @@ html.semi-dark .sidebar-wrapper .sidebar-header img {
 }
 
 /* Yellow colure icon under Header navigation CSS */
-
 .flipkart-navbar-search ul {
 	overflow: hidden;
 	height: 30px;
@@ -4357,7 +4351,9 @@ html.semi-dark .sidebar-wrapper .sidebar-header img {
 
 .flipkart-navbar-search ul li a {
 	position: relative;
-	color: #efefef !important;
+	color: #fff !important;
+	font-size: 1rem;
+    font-weight: 500 !important;
 }
 
 .flipkart-navbar-search ul li a:hover {
@@ -4473,20 +4469,6 @@ html.semi-dark .sidebar-wrapper .sidebar-header img {
 .submenu-dropdown.active {
 	display: block !important;
 }
-
-/* button#Close-Modal {
-    width: 144px !important;
-    height: 45px !important;
-	box-shadow: 0px 3px 6px #00000029;
-} */
-
-/* metismenu css  */
-.sidebar-wrapper .metismenu a .parent-icon {
-	font-size: 18px;
-	/* line-height: 1; */
-	margin-left: 6px;
-}
-
 
 @media only screen and (max-width: 1023px) {
 	.sidebar-wrapper .metismenu {
@@ -4742,10 +4724,20 @@ button#O365_MainLink_Me {
 	height: 40px;
 }
 
+.parent-icon {
+    padding: 9px 10px!important;
+    box-shadow: 0 3px 12px rgba(0,0,0,.10196078431372549)!important;
+    border: 1px solid #cbcbcb;
+    text-align: center!important;
+}
 
 .parent-icon img {
-	width: 24px !important;
+	width: 27px !important;
 	height: auto !important;
+} 
+
+.submenu-dropdown .submenu-iconz {
+	height: 30px !important;
 }
 
 /* mobile screen logo css */
@@ -4765,47 +4757,6 @@ button#O365_MainLink_Me {
 
 
 /* 22 aug 2023 */
-
-
-
-/* aside navigation small icons and responsive css */
-
-
-@media only screen and (max-width: 1023px) {
-	.sidebar-wrapper .metismenu {
-		margin-top: 5px !important;
-	}
-
-	.metismenu .parent-icon {
-		width: 30px !important;
-	}
-}
-
-@media only screen and (max-width: 1023px) {
-	.metismenu .parent-icon img {
-		width: 25px !important;
-	}
-
-	.metismenu .parent-icon {
-		width: 35px !important;
-	}
-}
-
-@media only screen and (min-width: 1024px) {
-	.metismenu .parent-icon img {
-		width: 25px !important;
-	}
-
-	.metismenu .parent-icon {
-		width: 35px !important;
-	}
-}
-
-.submenu-dropdown .submenu-iconz {
-	height: 25px !important;
-	width: 25px !important;
-}
-
 .btn-primary {
 	background-color: #2b82c7 !important;
 }
@@ -5157,4 +5108,7 @@ footer {
   /* span.anticon.anticon-close-circle {display: block !important} */
   .usc-adduser-btn .css-13cymwt-control .css-3w2yfm-ValueContainer{
 	overflow: auto !important;
+}
+.UAM-header{
+	background-image: url("../images/images-folder/UAM-header-banner.png");
 }
