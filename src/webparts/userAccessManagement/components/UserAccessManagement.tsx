@@ -3096,7 +3096,7 @@ export default class UserAccessManagement extends React.Component<
   public mapRoleName(roleName: any) {
     switch (roleName) {
       case "User Admin":
-        return "UAM Admin";
+        return "UAM MasterData - Manager";
       case "Auditor":
         return "Sharia Repository - Auditor";
       case "ISCG Staff":
@@ -3590,7 +3590,7 @@ export default class UserAccessManagement extends React.Component<
       const getallroles = this.state.roles.map((obj: any) => obj.label)
       for (let i = 0; i < this.state.roles.length; i++) {
         setDropDownValue.push({
-          label: getallroles.includes("User Admin") ? 'UAM Admin' :
+          label: getallroles.includes("User Admin") ? 'UAM MasterData - Manager' :
             getallroles.includes("Auditor") ? 'Sharia Repository - Auditor' :
               getallroles.includes("ISCG Staff") ? 'Sharia Repository - ISCG Staff' :
                 getallroles.includes("ISCG Staff Admin") ? 'Sharia Repository - Master Data Manager' :
@@ -3629,7 +3629,7 @@ export default class UserAccessManagement extends React.Component<
       const getallroles = e[0].roles.map((obj: any) => obj.name)
       for (let i = 0; i < e.length; i++) {
         setDropDownValue.push({
-          label: getallroles.includes("User Admin") ? 'UAM Admin' :
+          label: getallroles.includes("User Admin") ? 'UAM MasterData - Manager' :
             getallroles.includes("Auditor") ? 'Sharia Repository - Auditor' :
               getallroles.includes("ISCG Staff") ? 'Sharia Repository - ISCG Staff' :
                 getallroles.includes("ISCG Staff Admin") ? 'Sharia Repository - Master Data Manager' :
