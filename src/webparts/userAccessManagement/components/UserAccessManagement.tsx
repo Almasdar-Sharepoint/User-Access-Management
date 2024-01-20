@@ -186,7 +186,7 @@ export default class UserAccessManagement extends React.Component<
   public async componentDidMount() {
 
     await this.props.context.aadTokenProviderFactory.getTokenProvider().then((provider: any) => {
-      provider.getToken("e2c53e44-d47e-4d8d-8a24-fe222074c7d3").then((token: any) => {
+      provider.getToken(" e2c53e44-d47e-4d8d-8a24-fe222074c7d3").then((token: any) => {
         this.setState({ accessToken: token }, () => {
           console.log(token, "token form directry before getting Roles")
           this.allUser();
@@ -725,7 +725,7 @@ export default class UserAccessManagement extends React.Component<
 
             }
           );
-          // this.ShowDatainUAM(response.data);
+         // this.ShowDatainUAM(response.data);
 
 
         } else {
@@ -3621,7 +3621,7 @@ export default class UserAccessManagement extends React.Component<
         })
       }
       this.setState({
-        newOption: setDropDownValue
+        roles: setDropDownValue
 
       })
     }
