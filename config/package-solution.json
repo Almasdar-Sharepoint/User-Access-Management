@@ -6,7 +6,7 @@
     "version": "1.0.0.1",
     "includeClientSideAssets": true,
     "skipFeatureDeployment": true,
-    "webApiPermissionRequests": [{"scope": "user_impersonation","resource": "b9fd59c2-03b9-4540-9c4d-1a255a3889ea"},{"scope": "access_as_application","resource": "b9fd59c2-03b9-4540-9c4d-1a255a3889ea"}],
+    "webApiPermissionRequests": [{"scope": "user_impersonation","resource": "e2c53e44-d47e-4d8d-8a24-fe222074c7d3"},{"scope": "access_as_application","resource": "e2c53e44-d47e-4d8d-8a24-fe222074c7d3"}],
     "isDomainIsolated": false,
     "developer": {
       "name": "",

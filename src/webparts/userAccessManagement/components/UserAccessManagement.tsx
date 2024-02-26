@@ -186,17 +186,22 @@ export default class UserAccessManagement extends React.Component<
   public async componentDidMount() {
 
     await this.props.context.aadTokenProviderFactory.getTokenProvider().then((provider: any) => {
-      provider.getToken(" e2c53e44-d47e-4d8d-8a24-fe222074c7d3").then((token: any) => {
-        this.setState({ accessToken: token }, () => {
-          console.log(token, "token form directry before getting Roles")
+      provider.getToken("e2c53e44-d47e-4d8d-8a24-fe222074c7d3").then((token: any) => {
+        this.setState({ accessToken: token }, async () => {
+          //console.log(token, "token form directry before getting Roles")
+
+
+          //this.GetELibrarywebAppAPI();
+        
           this.allUser();
+          this.findUser();
           this.Application();
           this.Search();
           this.Roles();
-          this.findUser();
+         
           this.GetApplicationModules();
         })
-        console.log(token, "token form directry")
+        //console.log(token, "token form directry");
       })
 
 
@@ -254,6 +259,51 @@ export default class UserAccessManagement extends React.Component<
         $(this).closest("li").find(".submenu-dropdown").addClass("active");
       }
     });
+  }
+
+  public async GetELibrarywebAppAPI() {
+    try{
+    let apiURL = `${this.context.pageContext.web.absoluteUrl}/_api/lists/GetByTitle('URL_Configuration')/items?$select=Title,WebAPiURL`;
+    this.context.spHttpClient
+      .get(apiURL, SPHttpClient.configurations.v1)
+      .then((response: SPHttpClientResponse) => {
+        response.json().then((responseJSON: any) => {
+          for (let i = 0; i < responseJSON.value.length; i++) {
+
+          
+              const check = responseJSON.value[i].Title
+              //console.log(check, 'checkCondition')
+              if (check === 'UserAccessManagementWebAPI') {
+                Constants.var = responseJSON.value[i].WebAPiURL.Url;
+
+                  this.allUser();
+           this.Application();
+          this.Search();
+          this.Roles();
+          this.findUser();
+          this.GetApplicationModules();
+
+              }
+              else if(check === "UAMPowerBIUrl")
+              {
+                Constants.PowerBiReport = responseJSON.value[i].WebAPiURL.Url
+                //console.log(Constants.PowerBiReport,"power bi report")
+              }
+            
+          }
+          //constants.shariaResearchWebapi =responseJSON.value[0].WebAPiURL.Url;
+          //   this.setState({ allDataApi: responseJSON.value })
+          //console.log(this.state.allDataApi, "web app apiurl");
+        });
+      });
+    }
+    catch(ex:any)
+    {
+      //console.log(ex);
+    }
+    // if(Webapi === "shariaResearchWebapi"){
+    //   const ShariaResearchWebApi = this.state.allDataApi.map((obj:any)=>obj.WebAPiURL)
+    // }
   }
 
   public async GetAuthentication() {
@@ -441,7 +491,9 @@ export default class UserAccessManagement extends React.Component<
           this.setState({ datarecords: response.data });
         });
       })
-      .catch((error) => { });
+      .catch((error) => {
+        //console.log(error);
+       });
   }
 
   public allUser = () => {
@@ -461,12 +513,14 @@ export default class UserAccessManagement extends React.Component<
         )
         .then((response) => {
           this.setState({ datarecords: [] }, () => {
-            console.log(response.data);
+           // console.log(response.data);
             this.setState({
               datarecords: response.data,
               datarecordsDup: response.data,
             }, () => { this.filterGrid(); });
           });
+        }).catch((ex:any)=>{
+          //console.log(ex);
         });
     } catch (exception) { }
   }
@@ -493,7 +547,9 @@ export default class UserAccessManagement extends React.Component<
           }));
           this.setState({ values });
         })
-        .catch((error) => { });
+        .catch((error) => { 
+          //console.log(error);
+        });
     } catch (exception) { }
   };
 
@@ -671,7 +727,7 @@ export default class UserAccessManagement extends React.Component<
               label: option.name,
             }));
             this.setState({ roles },
-              // () => this.ShowDatainUAM(roles)
+               () => this.modifydata(roles,"setapplicationroles")
             );
           })
           .catch((error) => {
@@ -722,10 +778,11 @@ export default class UserAccessManagement extends React.Component<
             },
             () => {
               this.Roles();
+              this.modifydata(applicationSelectedRoles,"fromgetbyid");
 
             }
           );
-         // this.ShowDatainUAM(response.data);
+         
 
 
         } else {
@@ -991,7 +1048,7 @@ export default class UserAccessManagement extends React.Component<
   };
 
   handleChangeId = (e: any) => {
-    console.log(e);
+    //console.log(e);
     this.setState({ selectedId: e }, () => {
       this.filterGrid(); //added by siva krishna
     });
@@ -1000,7 +1057,7 @@ export default class UserAccessManagement extends React.Component<
   handleInputChangeId = (e: any) => {
     const a = e.replace(/"/g, "");
     this.setState({ searchId: e });
-    console.log(a, "IdSearch");
+   // console.log(a, "IdSearch");
     let config = {
       method: 'get',
 
@@ -1015,7 +1072,7 @@ export default class UserAccessManagement extends React.Component<
         config
       )
       .then((response) => {
-        console.log(response.data);
+        //console.log(response.data);
         const options = response.data.map((obj: any) => ({
           value: obj,
           label: obj,
@@ -1023,12 +1080,12 @@ export default class UserAccessManagement extends React.Component<
         this.setState({ options });
       })
       .catch((error) => {
-        console.log(error);
+        //console.log(error);
       });
   };
 
   handleChangeName = (e: any) => {
-    console.log(e);
+    //console.log(e);
     this.setState({ selectedName: e }, () => {
       this.filterGrid(); //added by siva krishna
     });
@@ -1037,7 +1094,7 @@ export default class UserAccessManagement extends React.Component<
   handleInputChangeName = (e: any) => {
     const a = e.replace(/"/g, "");
     this.setState({ searchName: e });
-    console.log(a, "NameSearch");
+   // console.log(a, "NameSearch");
     let config = {
       method: 'get',
 
@@ -1052,7 +1109,7 @@ export default class UserAccessManagement extends React.Component<
         config
       )
       .then((response) => {
-        console.log(response.data);
+       // console.log(response.data);
         const options = response.data.map((obj: any) => ({
           value: obj,
           label: obj,
@@ -1060,12 +1117,12 @@ export default class UserAccessManagement extends React.Component<
         this.setState({ options });
       })
       .catch((error) => {
-        console.log(error);
+        //console.log(error);
       });
   };
 
   handleChangeEmail = (e: any) => {
-    console.log(e);
+    //console.log(e);
     this.setState({ selectedEmail: e }, () => {
       this.filterGrid(); //added by siva krishna
     });
@@ -1074,7 +1131,7 @@ export default class UserAccessManagement extends React.Component<
   handleInputChangeEmail = (e: any) => {
     const a = e.replace(/"/g, "");
     this.setState({ searchEmail: e });
-    console.log(a, "EmailSearch");
+    //console.log(a, "EmailSearch");
     let config = {
       method: 'get',
 
@@ -1089,7 +1146,7 @@ export default class UserAccessManagement extends React.Component<
         config
       )
       .then((response) => {
-        console.log(response.data);
+        //console.log(response.data);
         const options = response.data.map((obj: any) => ({
           value: obj,
           label: obj,
@@ -1097,12 +1154,12 @@ export default class UserAccessManagement extends React.Component<
         this.setState({ options });
       })
       .catch((error) => {
-        console.log(error);
+        //console.log(error);
       });
   };
 
   handleChangeRole = (e: any) => {
-    console.log(e);
+    //console.log(e);
     this.setState({ selectedRole: e }, () => {
       this.filterGrid();
     });
@@ -1111,7 +1168,7 @@ export default class UserAccessManagement extends React.Component<
   handleInputChangeRole = (e: any) => {
     const a = e.replace(/"/g, "");
     this.setState({ searchRole: e });
-    console.log(a, "RoleSearch");
+    //console.log(a, "RoleSearch");
     let config = {
       method: 'get',
 
@@ -1126,7 +1183,7 @@ export default class UserAccessManagement extends React.Component<
         config
       )
       .then((response) => {
-        console.log(response.data);
+        //console.log(response.data);
         const options = response.data.map((obj: any) => ({
           value: obj,
           label: obj,
@@ -1134,12 +1191,12 @@ export default class UserAccessManagement extends React.Component<
         this.setState({ options });
       })
       .catch((error) => {
-        console.log(error);
+        //console.log(error);
       });
   };
 
   handleChangecreate = (e: any) => {
-    console.log(e);
+    //console.log(e);
     this.setState({ iscreatedby: e }, () => {
       this.filterGrid();
     });
@@ -1148,7 +1205,7 @@ export default class UserAccessManagement extends React.Component<
   handleInputChangecreate = (e: any) => {
     const a = e.replace(/"/g, "");
     this.setState({ searchcreate: e });
-    console.log(a, "createSearch");
+   // console.log(a, "createSearch");
     let config = {
       method: 'get',
 
@@ -1163,7 +1220,7 @@ export default class UserAccessManagement extends React.Component<
         config
       )
       .then((response) => {
-        console.log(response.data);
+        //console.log(response.data);
         const options = response.data.map((obj: any) => ({
           value: obj,
           label: obj,
@@ -1171,12 +1228,12 @@ export default class UserAccessManagement extends React.Component<
         this.setState({ options });
       })
       .catch((error) => {
-        console.log(error);
+        //console.log(error);
       });
   };
 
   handleChangeDept = (e: any) => {
-    console.log(e);
+    //console.log(e);
     this.setState({ SelectedDeptOptions: e }, () => {
       this.filterGrid();
     });
@@ -1200,7 +1257,7 @@ export default class UserAccessManagement extends React.Component<
         config
       )
       .then((response) => {
-        console.log(response.data);
+       // console.log(response.data);
         var options = response.data.map((obj: any) => ({
           value: obj.department,
           label: obj.department,
@@ -1208,10 +1265,10 @@ export default class UserAccessManagement extends React.Component<
         //var options =[{ label: response.data[0].department, value : response.data[0].department}]
         this.setState({ DeptOptions: options });
         // alert(options);
-        console.log(options)
+        //console.log(options)
       })
       .catch((error) => {
-        console.log(error);
+        //console.log(error);
       });
   };
   handleDateRangeChange = (dateRange: any) => {
@@ -1464,11 +1521,11 @@ export default class UserAccessManagement extends React.Component<
         currentPage: 1,
       });
     } catch (ex) {
-      console.log(ex.message);
+      //console.log(ex.message);
     }
   }
 
-  findUser() {
+ public async findUser() {
     debugger;
     let config = {
       headers: { Authorization: `Bearer ${this.state.accessToken}` }
@@ -1478,7 +1535,7 @@ export default class UserAccessManagement extends React.Component<
       .then(response => {
         if (response.data && response.data.length > 0) {
           const roles1 = response.data[0].roles.map((role: { name: any }) => role.name);
-          console.log(roles1);
+          //console.log(roles1);
 
           // const roles = response.data[0].roles.map((role: { name: any; applicationName: any; }) => ({
           //   name: role.name,
@@ -1584,7 +1641,7 @@ export default class UserAccessManagement extends React.Component<
                       >
                         <li className="upper-links default-active active"><a className="links mb-0 mt-1" href="#">HOME</a>
                         </li>
-                        {Constants.PowerBiReport!=""&& <li className="upper-links default-active"><a className="links mb-0 mt-1" onClick={()=>this.openpowerBI()}>REPORTS</a>
+                        {Constants.PowerBiReport!=""&& <li className="upper-links"><a className="links mb-0 mt-1" onClick={()=>this.openpowerBI()}>REPORTS</a>
                         </li> }
                        
                         {/* <li className="upper-links"><a className="links fontsize-16 mb-0 mt-1" href="#/createrequest/NewRequest">Create Request</a>
@@ -1626,148 +1683,7 @@ export default class UserAccessManagement extends React.Component<
               </div>
             </header>
 
-            {/* <header className="row flex-wrap align-items-center justify-content-center justify-content-md-center border-bottom bg-primary-header h-55 px-5 w-100 m-0 pe-0 position-fixed z-index-9 ps-0">
-
-              <div id="flipkart-navbar" className="bg-primary-header">
-                <div className="container-fluid mt-1">
-                  <div className="d-flex align-items-center">
-
-                    <div className="sidebar-header btn-primary border-0">
-                      <div className="toggle-icon ms-1 d-flex align-items-center mt-2
-                      ">
-                        {" "}
-                        <button
-                          type="button"
-                          className="hamburger hamburger-left "
-                        >
-                          <span className="hamburger-box">
-                            <span className="hamburger-inner"></span>
-                          </span>
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="flipkart-navbar-search smallsearch col-sm-6 col-xl-10 mt-8">
-                      <ul
-                        className="pull-right mb-0 ps-3 ms-6 pt-1 d-lg-block d-none"
-                        id="hideHeaderNav"
-                      >
-                        <li className="upper-links default-active"><a className="links fontsize-16 mb-0 " href="#">HOME</a>
-                        </li>
-                        <li className="upper-links"><a className="links fontsize-16 mb-0 mt-1" href="#/createrequest/NewRequest">Create Request</a>
-                   </li>
-
-                        <li className="upper-links position-relative"><a className="links fontsize-16 mb-0 mt-1" >Master Data</a></li>
-                      </ul>
-                    </div>
-                    <div>
-                      <span className="largenav ms-auto">
-                        <img
-                          src={
-                            this.props.context.pageContext.web.absoluteUrl +
-                            "/siteAssets/assets/images/images-folder/MicrosoftTeams-image5.png"
-                          } className='h-30'
-                        />
-                      </span>
-                    </div>
-
-                    <h2 className="w-100">
-                      <div className="smallnav menu mt-3">
-                        <div className="d-flex justify-content-end">
-                          <div>
-                            <div>
-                              <i
-                                className="bi bi-three-dots-vertical"
-                                onClick={() => {
-                                  this.headerNav();
-                                }}
-                              ></i>
-                            </div>
-                          </div>
-
-                        </div>
-
-                      </div>
-
-                    </h2>
-
-
-
-                  </div>
-
-                </div>
-
-              </div>
-
-            </header> */}
-
-            {/* <header className="row flex-wrap align-items-center justify-content-center justify-content-md-center border-bottom btn-primary h-55 px-5 w-100 m-0 pe-0 position-fixed z-index-9 ps-0">
-              <div id="flipkart-navbar" className="btn-primary">
-                <div className="container-fluid">
-
-                  <div className="row  align-items-center">
-
-                    <div className="col-sm-12 col-lg-2 d-flex justify-content-between">
-                      <div className="sidebar-header btn-primary border-0">
-                        <div className="toggle-icon ms-0 d-flex align-items-center">
-                          {" "}
-                          <button
-                            type="button"
-                            className="hamburger hamburger-left mt-2"
-                          >
-                            <span className="hamburger-box">
-                              <span className="hamburger-inner"></span>
-                            </span>
-                          </button>
-                        </div>
-                      </div>
-                      <span className="largenav ps-3">
-                        <img
-                          src={
-                            this.props.context.pageContext.web.absoluteUrl +
-                            "/siteAssets/assets/images/images-folder/MicrosoftTeams-image5.png"
-                          }
-                        />
-                      </span>
-
-                      <div>
-                        <h2 className="w-100">
-                          <div className="smallnav menu py-2 my-1">
-                            <div className="d-flex justify-content-end">
-                              <div>
-
-                                <div>
-                                  <i
-                                    className="bi bi-three-dots-vertical"
-                                    onClick={() => {
-                                      this.headerNav();
-                                    }}
-                                  ></i>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </h2>
-                      </div>
-                    </div>
-                    <div className="flipkart-navbar-search smallsearch col-sm-12 col-lg-10 ">
-                      <ul
-                        className="pull-right ps-0 mb-0 mt-3 ps-5 ms-6 d-lg-block d-none"
-                        id="hideHeaderNav"
-                      >
-                        <li className="upper-links active">
-                          <a className="links fontsize-15 mb-0 mt-1" href="#">
-                            Home
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                  
-                  </div>
-                </div>
-              </div>
-            </header> */}
-
+            
 
             <aside className="sidebar-wrapper border-0" data-simplebar="init">
               <div className="simplebar-wrapper bg-white shadow-lg">
@@ -2050,229 +1966,7 @@ export default class UserAccessManagement extends React.Component<
 
             </aside>
 
-            {/* <aside className="sidebar-wrapper border-0" data-simplebar="init">
-              <div className="simplebar-wrapper bg-white shadow-lg">
-                <div className="simplebar-height-auto-observer-wrapper">
-                  <div className="simplebar-height-auto-observer"></div>
-                </div>
-                <div className="simplebar-mask">
-                  <div className="simplebar-offset">
-                    <div className="simplebar-content-wrapper">
-                      <div className="simplebar-content">
-                        <ul className="metismenu h-100 ms-1" id="menu">
-                          <li className="menu-item sub-menu">
-                            <a
-                              href="javascript:;"
-                              className="menu-link has-arrow p-2 text-decoration-none"
-                            >
-                              <div className="parent-icon shadow p-2 rounded">
-                                <img
-                                  src={
-                                    this.props.context.pageContext.web
-                                      .absoluteUrl +
-                                    "/siteAssets/assets/images/images-folder/fingerprint.png"
-                                  }
-                                  className="h-30 w-31"
-                                />
-                              </div>
-                              <div className="menu-title bliss2M fontsize-15">
-                                AL MASDAR
-                              </div>
-                            </a>
-                            <ul className="submenu-dropdown ms-2 active">
-                              <li className="menu-item fontsize-14 active">
-                                <a href="index.html" className="menu-link ps-2 text-decoration-none">
-                                  <div className="p-1 shadow rounded">
-                                    <img
-                                      src={
-                                        this.props.context.pageContext.web
-                                          .absoluteUrl +
-                                        "/siteAssets/assets/images/images-folder/Helpdesk-sidenav-Icon.png"
-                                      }
-                                      className="h-30 w-31"
-                                    />
-                                  </div>
-                                  <div className="menu-title bliss2M fontsize-14 ms-2">
-                                    Helpdesk
-                                  </div>
-                                </a>
-                              </li>
-
-                              <li className="menu-item fontsize-14">
-                                <a href="index.html" className="menu-link ps-2 text-decoration-none">
-                                  <div className="p-1 shadow rounded">
-                                    <img
-                                      src={
-                                        this.props.context.pageContext.web
-                                          .absoluteUrl +
-                                        "/siteAssets/assets/images/images-folder/Sharia-research.png"
-                                      }
-                                      className="h-30 w-31"
-                                    />
-                                  </div>
-                                  <div className="menu-title bliss2M fontsize-14 ms-2">
-                                    Sharia Research
-                                  </div>
-                                </a>
-                              </li>
-
-                              <li className="menu-item fontsize-14">
-                                <a href="index.html" className="menu-link ps-2 text-decoration-none">
-                                  <div className="p-1 shadow rounded">
-                                    <img
-                                      src={
-                                        this.props.context.pageContext.web
-                                          .absoluteUrl +
-                                        "/siteAssets/assets/images/images-folder/Tawazun-Sidenav.png"
-                                      }
-                                      className="h-30 31"
-                                    />
-                                  </div>
-                                  <div className="menu-title bliss2M fontsize-14 ms-3">
-                                    Tawazun
-                                  </div>
-                                </a>
-                              </li>
-                              <li className="menu-item fontsize-14">
-                                <a href="index.html" className="menu-link ps-2 text-decoration-none">
-                                  <div className="p-1 shadow rounded">
-                                    <img
-                                      src={
-                                        this.props.context.pageContext.web
-                                          .absoluteUrl +
-                                        "/siteAssets/assets/images/images-folder/APEX-sidenav.png"
-                                      }
-                                      className="h-30 31"
-                                    />
-                                  </div>
-                                  <div className="menu-title bliss2M fontsize-14 ms-4 ps-1">
-                                    APEX
-                                  </div>
-                                </a>
-                              </li>
-                              <li className="menu-item fontsize-14">
-                                <a href="index.html" className="menu-link ps-2 text-decoration-none">
-                                  <div className="p-1 shadow rounded">
-                                    <img
-                                      src={
-                                        this.props.context.pageContext.web
-                                          .absoluteUrl +
-                                        "/siteAssets/assets/images/images-folder/VertexSideNav.png"
-                                      }
-                                      className="h-30 w-31"
-                                    />
-                                  </div>
-                                  <div className="menu-title bliss2M fontsize-14 ms-3 ps-1">
-                                    Vertax
-                                  </div>
-                                </a>
-                              </li>
-                            </ul>
-                          </li>
-
-                          <li className="menu-item sub-menu">
-                            <a
-                              href="javascript:;"
-                              className="menu-link has-arrow p-2"
-                              data-bs-toggle="collapse"
-                              data-bs-target="#second-collapse"
-                              aria-expanded="false"
-                            >
-                              <div className="parent-icon shadow p-2 rounded">
-                                <img
-                                  src={
-                                    this.props.context.pageContext.web
-                                      .absoluteUrl +
-                                    "/siteAssets/assets/images/images-folder/AlifSidenav.png"
-                                  }
-                                  className="h-30 w-31"
-                                />
-                              </div>
-                              <div className="menu-title bliss2M fontsize-16">
-                                ALIF
-                              </div>
-                            </a>
-                            <ul className="submenu-dropdown ms-2">
-                              <li className="menu-item fontsize-14">
-                                <a href="index.html" className="menu-link ps-2 text-decoration-none">
-                                  <div className="p-1 shadow rounded">
-                                    <img
-                                      src={
-                                        this.props.context.pageContext.web
-                                          .absoluteUrl +
-                                        "/siteAssets/assets/images/images-folder/ELibsideNav.png"
-                                      }
-                                      className="h-30 w-31"
-                                    />
-                                  </div>
-                                  <div className="menu-title bliss2M fontsize-16 ms-2">
-                                    Elibrary
-                                  </div>
-                                </a>
-                              </li>
-
-                              <li className="menu-item fontsize-14">
-                                <a href="index.html" className="menu-link ps-2 text-decoration-none">
-                                  <div className="p-1 shadow rounded">
-                                    <img
-                                      src={
-                                        this.props.context.pageContext.web
-                                          .absoluteUrl +
-                                        "/siteAssets/assets/images/images-folder/sharisRepsideNav.png"
-                                      }
-                                      className="h-30 w-31"
-                                    />
-                                  </div>
-                                  <div className="menu-title bliss2M fontsize-16 ms-3">
-                                    Sharia Repository
-                                  </div>
-                                </a>
-                              </li>
-                            </ul>
-                          </li>
-
-                          <li className="menu-item">
-                            <a href="javascript:;" className="p-2">
-                              <div className="parent-icon shadow p-2 rounded">
-                                <img
-                                  src={
-                                    this.props.context.pageContext.web
-                                      .absoluteUrl +
-                                    "/siteAssets/assets/images/images-folder/Soual-Al-Maal.png"
-                                  }
-                                  className="h-30 w-31"
-                                />
-                              </div>
-                              <div className="menu-title bliss2M fontsize-16 ">
-                                SOUQ AL MAAL
-                              </div>
-                            </a>
-                          </li>
-
-                          <li className="menu-item">
-                            <a href="javascript:;" className="menu-link p-2">
-                              <div className="parent-icon shadow p-2 rounded">
-                                <img
-                                  src={
-                                    this.props.context.pageContext.web
-                                      .absoluteUrl +
-                                    "/siteAssets/assets/images/images-folder/LeadxsideNav.png"
-                                  }
-                                  className="h-30 w-31"
-                                />
-                              </div>
-                              <div className="menu-title bliss2M fontsize-16">
-                                Lead X
-                              </div>
-                            </a>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </aside> */}
+           
 
             <main className="page-content bg-secondary">
               <div>
@@ -2281,13 +1975,13 @@ export default class UserAccessManagement extends React.Component<
                     <div className="row align-items-center py-1">
                       <div className="px-4 pt-3 pb-0 arrow-on-hover d-md-flex   justify-content-between banner-texxt">
                         <h5 className="mt-0 fontsize-24 text-white ms-2 bliss2M mb-1 text-center text-md-start ">User Access Management</h5>
-                        <h5 className="mt-0 fontsize-24 text-white ms-2 bliss2M  mb-1 text-center text-md-end me-2">إدارة وصول المستخدم</h5>
+                        <h5 className="mt-0 fontsize-38 text-white ms-2   mb-1 text-center text-md-end me-2">إدارة وصول المستخدم</h5>
                       </div>
                       <div className="px-4 pt-1 pb-3 arrow-on-hover d-md-flex justify-content-between banner-texxt">
-                        <p className="mb-0 fontsize-20 liss2R text-white ms-2 text-center text-md-start">Home / User Access Management</p>
-                        <p className="mb-0 fontsize-20 text-white ms-2 text-center text-md-end me-2">الرئيسية / إدارة وصول المستخدم</p>
-                      </div>
-                    </div>
+                        <p className="mb-0 fontsize-20  text-white ms-2 text-center text-md-start">Home / User Access Management</p>
+                        <p className="mb-0 fontsize-27 text-white ms-2 text-center text-md-end me-2">الرئيسية / إدارة وصول المستخدم</p>
+                      </div>  
+                    </div> 
                   </div>
 
 
@@ -2729,7 +2423,7 @@ export default class UserAccessManagement extends React.Component<
                                         options={this.state.roles}
                                         onChange={(selectedOptions) => {
                                           this.handleroles(selectedOptions);
-                                          console.log(selectedOptions);
+                                         // console.log(selectedOptions);
                                           const valrole = selectedOptions.length === 0 && !this.state.onUpdatehide;
                                           this.setState({ valrole });
                                         }}
@@ -3138,7 +2832,7 @@ export default class UserAccessManagement extends React.Component<
       // this.GetIdTokenClaims();
       // let accessToken: string = null;
       this.setCurrentAccount(email);//Sets the current account.
-      console.log(currentAccount);
+      //console.log(currentAccount);
       // this.setState({ isLoading: true });
       const loginRedirect: msal.RedirectRequest = this.state.tokenrequest;
       loginRedirect.loginHint = email;
@@ -3213,7 +2907,7 @@ export default class UserAccessManagement extends React.Component<
   protected interactionRequired = (email: string): Promise<string> => {
     try {
       // this.setState({ isLoading: true });
-      console.log("Inside Interaction");
+      //console.log("Inside Interaction");
       const loginPopupRequest: msal.PopupRequest = this.state.tokenrequest;
       loginPopupRequest.loginHint = email;
       return this.state.msalInstance
@@ -3569,7 +3263,7 @@ export default class UserAccessManagement extends React.Component<
       let a = document.createElement("a");
       a.href =Constants.PowerBiReport
 
-      console.log(Constants.PowerBiReport,"power bi url")
+     // console.log(Constants.PowerBiReport,"power bi url")
      
       document.body.appendChild(a);
 
@@ -3583,6 +3277,49 @@ export default class UserAccessManagement extends React.Component<
     } catch (ex) { }
   }
 
+
+public modifydata = (list:any,toupdate:any)=>
+{
+  var setDropDownValue: any = [];
+  if(list.length>0)
+  {
+   // console.log(list);
+    debugger;
+  for(let i=0;i<list.length;i++)
+  {
+    let value=list[i].label;
+    let itemvalue=list[i].value;
+    switch(value)
+    {
+      case "User Admin":setDropDownValue.push({label:'UAM - Master Data Manager',value:itemvalue});break;
+      case "Auditor":setDropDownValue.push({label:'Sharia Repository - Auditor',value:itemvalue});break;
+      case "ISCG Staff":setDropDownValue.push({label:'Sharia Repository - ISCG Staff',value:itemvalue});break;
+      case "ISCG Staff Admin":setDropDownValue.push({label:'Sharia Repository - Master Data Manager',value:itemvalue});break;
+      case "ELibrary Admin":setDropDownValue.push({label:'Alif E-Library – Master Data Manager',value:itemvalue});break;
+      case "ELibrary-ISCG Staff":setDropDownValue.push({label:'Alif E-Library - ISCG Staff',value:itemvalue});break;
+      case "Helpdesk Manager-Sharia Research":setDropDownValue.push({label:'Sharia Research - Helpdesk Manager',value:itemvalue});break;
+      case "ISCG Staff-ShariaResearch":setDropDownValue.push({label:'Sharia Research - ISCG Staff',value:itemvalue});break;
+      case "Master Data Admin-ShariaResearch":setDropDownValue.push({label:'Sharia Research - Master Data Manager',value:itemvalue});break;
+      case "Helpdesk Manager":setDropDownValue.push({label:'Sharia Helpdesk - Helpdesk Manager',value:itemvalue});break;
+      case "ISCG Staff - Helpdesk":setDropDownValue.push({label:'Sharia Helpdesk - ISCG Staff',value:itemvalue});break;
+      case "Master Data Admin - Helpdesk":setDropDownValue.push({label:'Sharia Helpdesk - Master Data Manager',value:itemvalue});break;
+      case "User Management Admin":setDropDownValue.push({label:'UAM - Master Data Manager',value:itemvalue});break;
+      case "SouqAlMaal Master Data Admin":setDropDownValue.push({label:'SouqAlMaal - Master Data Manager',value:itemvalue});break;
+      case "Master Data Admin - Apex":setDropDownValue.push({label:'Apex - Master Data Manager',value:itemvalue});break;
+      case "Master Data Admin - Tawazun":setDropDownValue.push({label:'Tawazun - Master Data Manager',value:itemvalue});break;
+      default:setDropDownValue.push({label:value,value:itemvalue});
+     
+    }
+  }
+  if(toupdate==="fromgetbyid"){
+  this.setState({applicationSelectedRoles:setDropDownValue})
+  }
+  else if(toupdate==="setapplicationroles")
+  {
+    this.setState({roles:setDropDownValue})
+  }
+  }
+}
 
   public ShowDatainUAM = (e: any) => {
     var setDropDownValue: any = [];
@@ -3666,7 +3403,7 @@ export default class UserAccessManagement extends React.Component<
     }
 
 
-    console.log(setDropDownValue)
+   // console.log(setDropDownValue)
 
   }
 }

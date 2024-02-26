@@ -111,7 +111,7 @@ export default class UserAccessManagementWebPart extends BaseClientSideWebPart<I
     //await this.GetAuthentication();
     // await this.getAccessToken(this.context.pageContext.user.email);
     
-    this.GetELibrarywebAppAPI();
+    await this.GetELibrarywebAppAPI();
 
    
     const accountName = encodeURIComponent(`i:0#.f|membership|${this.context.pageContext.user.email}`);
@@ -119,9 +119,9 @@ export default class UserAccessManagementWebPart extends BaseClientSideWebPart<I
     const response: SPHttpClientResponse = await this.context.spHttpClient.get(userProfileUrl, SPHttpClient.configurations.v1);
     const userProfile = await response.json();
     const department = userProfile['value'];
-    console.log(department);
+    //console.log(department);
     this.department = department;
-    console.log(this.department);
+    //console.log(this.department);
 
 
     return this._getEnvironmentMessage().then(message => {
@@ -233,9 +233,9 @@ export default class UserAccessManagementWebPart extends BaseClientSideWebPart<I
   
 
 
-  public GetELibrarywebAppAPI() {
+  public  GetELibrarywebAppAPI= async ()=> {
+    try{
     let apiURL = `${this.context.pageContext.web.absoluteUrl}/_api/lists/GetByTitle('URL_Configuration')/items?$select=Title,WebAPiURL`;
-    //alert(apiURL);
     this.context.spHttpClient
       .get(apiURL, SPHttpClient.configurations.v1)
       .then((response: SPHttpClientResponse) => {
@@ -244,7 +244,7 @@ export default class UserAccessManagementWebPart extends BaseClientSideWebPart<I
 
           
               const check = responseJSON.value[i].Title
-              console.log(check, 'checkCondition')
+              //console.log(check, 'checkCondition')
               if (check === 'UserAccessManagementWebAPI') {
                 Constants.var = responseJSON.value[i].WebAPiURL.Url;
 
@@ -252,7 +252,7 @@ export default class UserAccessManagementWebPart extends BaseClientSideWebPart<I
               else if(check === "UAMPowerBIUrl")
               {
                 Constants.PowerBiReport = responseJSON.value[i].WebAPiURL.Url
-                console.log(Constants.PowerBiReport,"power bi report")
+                //console.log(Constants.PowerBiReport,"power bi report")
               }
             
           }
@@ -261,6 +261,11 @@ export default class UserAccessManagementWebPart extends BaseClientSideWebPart<I
           //console.log(this.state.allDataApi, "web app apiurl");
         });
       });
+    }
+    catch(ex:any)
+    {
+      //console.log(ex);
+    }
     // if(Webapi === "shariaResearchWebapi"){
     //   const ShariaResearchWebApi = this.state.allDataApi.map((obj:any)=>obj.WebAPiURL)
     // }

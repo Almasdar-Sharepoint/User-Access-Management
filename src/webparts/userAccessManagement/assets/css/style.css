@@ -5112,3 +5112,12 @@ footer {
 .UAM-header{
 	background-image: url("../images/images-folder/UAM-header-banner.png");
 }
+
+.fontsize-38
+{
+font-size: 2.2rem !important;
+}
+.fontsize-27
+{
+font-size: 1.7rem !important;
+} 
