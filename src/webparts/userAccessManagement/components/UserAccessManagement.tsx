@@ -186,7 +186,7 @@ export default class UserAccessManagement extends React.Component<
   public async componentDidMount() {
 
     await this.props.context.aadTokenProviderFactory.getTokenProvider().then((provider: any) => {
-      provider.getToken("e2c53e44-d47e-4d8d-8a24-fe222074c7d3").then((token: any) => {
+      provider.getToken("ed31b499-d6da-4250-8367-052fd153daf9").then((token: any) => {
         this.setState({ accessToken: token }, async () => {
           //console.log(token, "token form directry before getting Roles")
 
@@ -197,7 +197,7 @@ export default class UserAccessManagement extends React.Component<
           this.findUser();
           this.Application();
           this.Search();
-          this.Roles();
+          //this.Roles();
          
           this.GetApplicationModules();
         })
@@ -2773,7 +2773,7 @@ export default class UserAccessManagement extends React.Component<
 
               </div>
             </main>
-            <footer className=" bg-secondary-2 h-55 px-3">
+            <footer className=" bg-secondary-2 footer-custom h-55 px-3">
               <p className="text-center text-white pt-3 font-16 ">
                 Copyrights Reserved Abu Dhabi Islamic Public Joint Stock Company
                 2022

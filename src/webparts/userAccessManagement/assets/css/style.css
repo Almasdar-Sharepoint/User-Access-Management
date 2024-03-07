@@ -4766,9 +4766,12 @@ button#O365_MainLink_Me {
 }
 
 /* sharepoint footer css */
-.r_b_beed2cf1 {
+/* .s_b_beed2cf1 {
 	display: none !important;
-}
+} */
+
+.footer-custom{display: block !important}
+footer{display: none}
 
 .arrow-on-hover {
 	cursor: pointer;
