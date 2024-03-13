@@ -186,7 +186,7 @@ export default class UserAccessManagement extends React.Component<
   public async componentDidMount() {
 
     await this.props.context.aadTokenProviderFactory.getTokenProvider().then((provider: any) => {
-      provider.getToken("ed31b499-d6da-4250-8367-052fd153daf9").then((token: any) => {
+      provider.getToken("b9fd59c2-03b9-4540-9c4d-1a255a3889ea").then((token: any) => {
         this.setState({ accessToken: token }, async () => {
           //console.log(token, "token form directry before getting Roles")
 
