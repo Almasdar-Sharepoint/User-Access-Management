@@ -2785,7 +2785,7 @@ export default class UserAccessManagement extends React.Component<
       </section>
     );
   }
-
+ 
 
   public mapRoleName(roleName: any) {
     switch (roleName) {
