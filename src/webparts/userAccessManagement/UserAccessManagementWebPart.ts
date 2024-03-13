@@ -4,7 +4,7 @@ import { Version } from '@microsoft/sp-core-library';
 import {
   IPropertyPaneConfiguration,
   PropertyPaneTextField
-} from '@microsoft/sp-property-pane';
+} from '@microsoft/sp-property-pane'; 
 import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
@@ -16,7 +16,7 @@ import { Constants } from './components/Constants/Constant';
 
 // import * as msal from "@azure/msal-browser";
 
-// let msalConfig : any;
+// let msalConfig : any; 
 // let msalInstance : any;
 // let tokenrequest : any;
 // let currentAccount : any;
