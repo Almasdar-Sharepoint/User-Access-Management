@@ -2777,8 +2777,8 @@ export default class UserAccessManagement extends React.Component<
               <p className="text-center text-white pt-3 font-16 ">
                 Copyrights Reserved Abu Dhabi Islamic Public Joint Stock Company
                 2022
-              </p>
-            </footer>
+              </p> 
+            </footer> 
             <div className="overlay nav-toggle-icon"></div>
           </div>
         </body>
