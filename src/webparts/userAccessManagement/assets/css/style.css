@@ -4881,7 +4881,7 @@ footer{display: none }
   #RecommendedItems{
 	  display: none !important;
   }
-  [data-automationid="SimpleFooter"]{
+  footer div[data-automationid="SimpleFooter"]{
 	  display: none !important;
   }
   /* ***sharepoint css hides end****** */
