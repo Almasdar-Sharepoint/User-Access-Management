@@ -29,3 +29,10 @@ jobs:
       - name: Package SPFx solution
         run: npx gulp package-solution --ship
 
+      - name: Upload SPFx package
+        uses: actions/upload-artifact@v4
+        with:
+          name: user-access-management-dev
+          path: solution/user-access-management.sppkg
+
+
