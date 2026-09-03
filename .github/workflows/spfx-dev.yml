@@ -1,1 +1,5 @@
 
+name: SPFx DEV CI/CD
+
+on:
+  workflow_dispatch:
