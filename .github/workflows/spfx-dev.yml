@@ -33,6 +33,18 @@ jobs:
         env:
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
 
+      - name: Generate DEV config
+        shell: bash
+        run: |
+          cat > src/webparts/userAccessManagement/config.ts <<EOF
+          export const appConfig = {
+            clientId: "${CLIENT_ID}"
+          };
+          EOF
+        env:
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+
+
       - name: Install dependencies
         run: npm ci
 
