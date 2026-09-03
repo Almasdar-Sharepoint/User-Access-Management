@@ -21,6 +21,18 @@ jobs:
           node-version: '16.20.2'
           cache: 'npm'
 
+      - name: Verify DEV Client ID
+        shell: bash
+        run: |
+          if [ -z "$CLIENT_ID" ]; then
+            echo "CLIENT_ID is NOT available"
+            exit 1
+          else
+            echo "CLIENT_ID is available"
+          fi
+        env:
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+
       - name: Install dependencies
         run: npm ci
 
@@ -35,5 +47,4 @@ jobs:
         with:
           name: user-access-management-dev
           path: solution/user-access-management.sppkg
-
 
