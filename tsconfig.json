@@ -5,6 +5,7 @@
     "forceConsistentCasingInFileNames": true,
     "module": "esnext",
     "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
     "jsx": "react",
     "declaration": true,
     "sourceMap": true,
@@ -14,7 +15,6 @@
     "inlineSources": false,
     "strictNullChecks": false,
     "noImplicitAny": true,
-
     "typeRoots": [
       "./node_modules/@types",
       "./node_modules/@microsoft"

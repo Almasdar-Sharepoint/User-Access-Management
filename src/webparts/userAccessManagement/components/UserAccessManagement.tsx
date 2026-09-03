@@ -10,8 +10,8 @@ import axios from "axios";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "../assets/css/feather.css";
-import * as $ from "jquery";
-import * as moment from 'moment';
+import $ from "jquery";
+import moment from 'moment';
 import { DatePicker } from 'antd';
 import 'antd/dist/antd.css';
 const { RangePicker } = DatePicker;
@@ -21,7 +21,7 @@ import {
   PeoplePicker,
   PrincipalType,
 } from "@pnp/spfx-controls-react/lib/PeoplePicker";
-import Select from "react-Select";
+import Select from "react-select";
 import "../assets/css/dataTables.bootstrap5.min.css";
 import { Constants } from "./Constants/Constant";
 import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
@@ -187,19 +187,19 @@ export default class UserAccessManagement extends React.Component<
 
     await this.props.context.aadTokenProviderFactory.getTokenProvider().then((provider: any) => {
       // provider.getToken("b9fd59c2-03b9-4540-9c4d-1a255a3889ea").then((token: any) => { //uat
-        provider.getToken("e2c53e44-d47e-4d8d-8a24-fe222074c7d3").then((token:any)=>{ //acu
+      provider.getToken("e2c53e44-d47e-4d8d-8a24-fe222074c7d3").then((token: any) => { //acu
         this.setState({ accessToken: token }, async () => {
           //console.log(token, "token form directry before getting Roles")
 
 
           //this.GetELibrarywebAppAPI();
-        
+
           this.allUser();
           this.findUser();
           this.Application();
           this.Search();
           //this.Roles();
-         
+
           this.GetApplicationModules();
         })
         //console.log(token, "token form directry");
@@ -263,43 +263,41 @@ export default class UserAccessManagement extends React.Component<
   }
 
   public async GetELibrarywebAppAPI() {
-    try{
-    let apiURL = `${this.context.pageContext.web.absoluteUrl}/_api/lists/GetByTitle('URL_Configuration')/items?$select=Title,WebAPiURL`;
-    this.context.spHttpClient
-      .get(apiURL, SPHttpClient.configurations.v1)
-      .then((response: SPHttpClientResponse) => {
-        response.json().then((responseJSON: any) => {
-          for (let i = 0; i < responseJSON.value.length; i++) {
+    try {
+      let apiURL = `${this.context.pageContext.web.absoluteUrl}/_api/lists/GetByTitle('URL_Configuration')/items?$select=Title,WebAPiURL`;
+      this.context.spHttpClient
+        .get(apiURL, SPHttpClient.configurations.v1)
+        .then((response: SPHttpClientResponse) => {
+          response.json().then((responseJSON: any) => {
+            for (let i = 0; i < responseJSON.value.length; i++) {
 
-          
+
               const check = responseJSON.value[i].Title
               //console.log(check, 'checkCondition')
               if (check === 'UserAccessManagementWebAPI') {
                 Constants.var = responseJSON.value[i].WebAPiURL.Url;
 
-                  this.allUser();
-           this.Application();
-          this.Search();
-          this.Roles();
-          this.findUser();
-          this.GetApplicationModules();
+                this.allUser();
+                this.Application();
+                this.Search();
+                this.Roles();
+                this.findUser();
+                this.GetApplicationModules();
 
               }
-              else if(check === "UAMPowerBIUrl")
-              {
+              else if (check === "UAMPowerBIUrl") {
                 Constants.PowerBiReport = responseJSON.value[i].WebAPiURL.Url
                 //console.log(Constants.PowerBiReport,"power bi report")
               }
-            
-          }
-          //constants.shariaResearchWebapi =responseJSON.value[0].WebAPiURL.Url;
-          //   this.setState({ allDataApi: responseJSON.value })
-          //console.log(this.state.allDataApi, "web app apiurl");
+
+            }
+            //constants.shariaResearchWebapi =responseJSON.value[0].WebAPiURL.Url;
+            //   this.setState({ allDataApi: responseJSON.value })
+            //console.log(this.state.allDataApi, "web app apiurl");
+          });
         });
-      });
     }
-    catch(ex:any)
-    {
+    catch (ex: any) {
       //console.log(ex);
     }
     // if(Webapi === "shariaResearchWebapi"){
@@ -494,7 +492,7 @@ export default class UserAccessManagement extends React.Component<
       })
       .catch((error) => {
         //console.log(error);
-       });
+      });
   }
 
   public allUser = () => {
@@ -514,13 +512,13 @@ export default class UserAccessManagement extends React.Component<
         )
         .then((response) => {
           this.setState({ datarecords: [] }, () => {
-           // console.log(response.data);
+            // console.log(response.data);
             this.setState({
               datarecords: response.data,
               datarecordsDup: response.data,
             }, () => { this.filterGrid(); });
           });
-        }).catch((ex:any)=>{
+        }).catch((ex: any) => {
           //console.log(ex);
         });
     } catch (exception) { }
@@ -548,7 +546,7 @@ export default class UserAccessManagement extends React.Component<
           }));
           this.setState({ values });
         })
-        .catch((error) => { 
+        .catch((error) => {
           //console.log(error);
         });
     } catch (exception) { }
@@ -728,7 +726,7 @@ export default class UserAccessManagement extends React.Component<
               label: option.name,
             }));
             this.setState({ roles },
-               () => this.modifydata(roles,"setapplicationroles")
+              () => this.modifydata(roles, "setapplicationroles")
             );
           })
           .catch((error) => {
@@ -779,11 +777,11 @@ export default class UserAccessManagement extends React.Component<
             },
             () => {
               this.Roles();
-              this.modifydata(applicationSelectedRoles,"fromgetbyid");
+              this.modifydata(applicationSelectedRoles, "fromgetbyid");
 
             }
           );
-         
+
 
 
         } else {
@@ -1058,7 +1056,7 @@ export default class UserAccessManagement extends React.Component<
   handleInputChangeId = (e: any) => {
     const a = e.replace(/"/g, "");
     this.setState({ searchId: e });
-   // console.log(a, "IdSearch");
+    // console.log(a, "IdSearch");
     let config = {
       method: 'get',
 
@@ -1095,7 +1093,7 @@ export default class UserAccessManagement extends React.Component<
   handleInputChangeName = (e: any) => {
     const a = e.replace(/"/g, "");
     this.setState({ searchName: e });
-   // console.log(a, "NameSearch");
+    // console.log(a, "NameSearch");
     let config = {
       method: 'get',
 
@@ -1110,7 +1108,7 @@ export default class UserAccessManagement extends React.Component<
         config
       )
       .then((response) => {
-       // console.log(response.data);
+        // console.log(response.data);
         const options = response.data.map((obj: any) => ({
           value: obj,
           label: obj,
@@ -1206,7 +1204,7 @@ export default class UserAccessManagement extends React.Component<
   handleInputChangecreate = (e: any) => {
     const a = e.replace(/"/g, "");
     this.setState({ searchcreate: e });
-   // console.log(a, "createSearch");
+    // console.log(a, "createSearch");
     let config = {
       method: 'get',
 
@@ -1258,7 +1256,7 @@ export default class UserAccessManagement extends React.Component<
         config
       )
       .then((response) => {
-       // console.log(response.data);
+        // console.log(response.data);
         var options = response.data.map((obj: any) => ({
           value: obj.department,
           label: obj.department,
@@ -1526,7 +1524,7 @@ export default class UserAccessManagement extends React.Component<
     }
   }
 
- public async findUser() {
+  public async findUser() {
     debugger;
     let config = {
       headers: { Authorization: `Bearer ${this.state.accessToken}` }
@@ -1619,7 +1617,7 @@ export default class UserAccessManagement extends React.Component<
               <div id="flipkart-navbar" className="UAM-header">
                 <div className="container-fluid mt-1">
                   <div className="d-flex justify-content-between">
- 
+
                     <div className="sidebar-header border-0">
                       <div className="toggle-icon ms-1 d-flex align-items-center">
                         {" "}
@@ -1631,7 +1629,7 @@ export default class UserAccessManagement extends React.Component<
                             <span className="hamburger-inner"></span>
                           </span>
                         </button>
-                      </div> 
+                      </div>
                     </div>
 
 
@@ -1642,9 +1640,9 @@ export default class UserAccessManagement extends React.Component<
                       >
                         <li className="upper-links default-active active"><a className="links mb-0 mt-1" href="#">HOME</a>
                         </li>
-                        {Constants.PowerBiReport!=""&& <li className="upper-links"><a className="links mb-0 mt-1" onClick={()=>this.openpowerBI()}>REPORTS</a>
-                        </li> }
-                       
+                        {Constants.PowerBiReport != "" && <li className="upper-links"><a className="links mb-0 mt-1" onClick={() => this.openpowerBI()}>REPORTS</a>
+                        </li>}
+
                         {/* <li className="upper-links"><a className="links fontsize-16 mb-0 mt-1" href="#/createrequest/NewRequest">Create Request</a>
                     </li> */}
 
@@ -1684,19 +1682,19 @@ export default class UserAccessManagement extends React.Component<
               </div>
             </header>
 
-            
+
 
             <aside className="sidebar-wrapper border-0" data-simplebar="init">
               <div className="simplebar-wrapper bg-white shadow-lg">
                 <div className="simplebar-height-auto-observer-wrapper">
                   <div className="simplebar-height-auto-observer">
                   </div>
-                </div> 
-                <div className="simplebar-mask"> 
+                </div>
+                <div className="simplebar-mask">
 
                   <div className="simplebar-offset">
                     <div className="simplebar-content-wrapper">
-                      <div className="simplebar-content"> 
+                      <div className="simplebar-content">
                         <ul className="metismenu h-100" id="menu">
                           <li className="menu-item sub-menu pt-2">
                             <a
@@ -1967,7 +1965,7 @@ export default class UserAccessManagement extends React.Component<
 
             </aside>
 
-           
+
 
             <main className="page-content bg-secondary">
               <div>
@@ -1981,8 +1979,8 @@ export default class UserAccessManagement extends React.Component<
                       <div className="px-4 pt-1 pb-3 arrow-on-hover d-md-flex justify-content-between banner-texxt">
                         <p className="mb-0 fontsize-20  text-white ms-2 text-center text-md-start">Home / User Access Management</p>
                         <p className="mb-0 fontsize-27 text-white ms-2 text-center text-md-end me-2">الرئيسية / إدارة وصول المستخدم</p>
-                      </div>  
-                    </div> 
+                      </div>
+                    </div>
                   </div>
 
 
@@ -2020,7 +2018,7 @@ export default class UserAccessManagement extends React.Component<
                               <div className="col-md-4 col-lg-3 py-2">
                                 <Select
                                   value={this.state.selectedId}
-                                  onChange={(e) => {
+                                  onChange={(e: any) => {
                                     this.handleChangeId(e);
                                   }}
                                   options={this.state.options}
@@ -2028,14 +2026,14 @@ export default class UserAccessManagement extends React.Component<
                                   menuIsOpen={this.state.searchId.length > 0}
                                   isMulti={true}
                                   placeholder={"Search EMP ID"}
-                                  components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
+                                  components={{ DropdownIndicator: (): null => null, IndicatorSeparator: (): null => null }}
 
                                 />
                               </div>
                               <div className="col-md-4 col-lg-3 py-2">
                                 <Select
                                   value={this.state.selectedName}
-                                  onChange={(e) => {
+                                  onChange={(e: any) => {
                                     this.handleChangeName(e);
                                   }}
                                   options={this.state.options}
@@ -2043,14 +2041,14 @@ export default class UserAccessManagement extends React.Component<
                                   menuIsOpen={this.state.searchName.length > 0}
                                   isMulti={true}
                                   placeholder={"Search Name"}
-                                  components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
+                                  components={{ DropdownIndicator: (): null => null, IndicatorSeparator: (): null => null }}
 
                                 />
                               </div>
                               <div className="col-md-4 col-lg-3 py-2">
                                 <Select
                                   value={this.state.selectedEmail}
-                                  onChange={(e) => {
+                                  onChange={(e: any) => {
                                     this.handleChangeEmail(e);
                                   }}
                                   options={this.state.options}
@@ -2058,7 +2056,7 @@ export default class UserAccessManagement extends React.Component<
                                   menuIsOpen={this.state.searchEmail.length > 0}
                                   isMulti={true}
                                   placeholder={"Search E-mail ID"}
-                                  components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
+                                  components={{ DropdownIndicator: (): null => null, IndicatorSeparator: (): null => null }}
 
                                 />
                               </div>
@@ -2067,20 +2065,20 @@ export default class UserAccessManagement extends React.Component<
                                   value={this.state.SelectedDeptOptions}
                                   // (option: { value: any }) =>
                                   //   option.value === this.state.Depti)}
-                                  onChange={(e) => { this.handleChangeDept(e) }}
+                                  onChange={(e: any) => { this.handleChangeDept(e) }}
                                   options={this.state.DeptOptions}
                                   onInputChange={this.handleInputChangeDept}
                                   menuIsOpen={this.state.SearchDept.length > 0}
                                   isMulti={true}
                                   placeholder="Search Department"
-                                  components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
+                                  components={{ DropdownIndicator: (): null => null, IndicatorSeparator: (): null => null }}
 
                                 />
                               </div>
                               <div className="col-md-4 col-lg-3 py-2">
                                 <Select
                                   value={this.state.selectedRole}
-                                  onChange={(e) => {
+                                  onChange={(e: any) => {
                                     this.handleChangeRole(e);
                                   }}
                                   options={this.state.options}
@@ -2088,7 +2086,7 @@ export default class UserAccessManagement extends React.Component<
                                   menuIsOpen={this.state.searchRole.length > 0}
                                   isMulti={true}
                                   placeholder={"Search Role"}
-                                  components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
+                                  components={{ DropdownIndicator: (): null => null, IndicatorSeparator: (): null => null }}
 
                                 />
                               </div>
@@ -2096,7 +2094,7 @@ export default class UserAccessManagement extends React.Component<
                               <div className=" col-md-4 col-lg-3 py-2">
                                 <Select
                                   value={this.state.iscreatedby}
-                                  onChange={(e) => {
+                                  onChange={(e: any) => {
                                     this.handleChangecreate(e);
                                   }}
                                   options={this.state.options}
@@ -2104,7 +2102,7 @@ export default class UserAccessManagement extends React.Component<
                                   menuIsOpen={this.state.searchcreate.length > 0}
                                   isMulti={true}
                                   placeholder={"Search Created By"}
-                                  components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
+                                  components={{ DropdownIndicator: (): null => null, IndicatorSeparator: (): null => null }}
 
 
                                 />
@@ -2257,7 +2255,7 @@ export default class UserAccessManagement extends React.Component<
                                         // onChange={(e) =>
                                         //   this.onChangePeoplePickerItems(e)
                                         // } 
-                                        onChange={(e) => {
+                                        onChange={(e: any) => {
                                           this.onChangePeoplePickerItems(e, this.state.branch);
                                           const email = e[0]?.secondaryText;
                                           let valname = false;
@@ -2398,7 +2396,7 @@ export default class UserAccessManagement extends React.Component<
                                       <Select
                                         value={this.state.applicationSelectedValue}
                                         options={this.state.values}
-                                        onChange={(selectedOption) => {
+                                        onChange={(selectedOption: any) => {
                                           this.handleapplication(selectedOption);
                                           const valmodule = !selectedOption;
                                           this.setState({ valmodule });
@@ -2422,9 +2420,9 @@ export default class UserAccessManagement extends React.Component<
                                         value={this.state.applicationSelectedRoles}
                                         // options={this.state.newOption}
                                         options={this.state.roles}
-                                        onChange={(selectedOptions) => {
+                                        onChange={(selectedOptions: any) => {
                                           this.handleroles(selectedOptions);
-                                         // console.log(selectedOptions);
+                                          // console.log(selectedOptions);
                                           const valrole = selectedOptions.length === 0 && !this.state.onUpdatehide;
                                           this.setState({ valrole });
                                         }}
@@ -2778,15 +2776,15 @@ export default class UserAccessManagement extends React.Component<
               <p className="text-center text-white pt-3 font-16 ">
                 Copyrights Reserved Abu Dhabi Islamic Public Joint Stock Company
                 2022
-              </p> 
-            </footer> 
+              </p>
+            </footer>
             <div className="overlay nav-toggle-icon"></div>
           </div>
         </body>
       </section>
     );
   }
- 
+
 
   public mapRoleName(roleName: any) {
     switch (roleName) {
@@ -3257,15 +3255,14 @@ export default class UserAccessManagement extends React.Component<
   }
 
 
-  openpowerBI=()=>
-  {
+  openpowerBI = () => {
     try {
-     
-      let a = document.createElement("a");
-      a.href =Constants.PowerBiReport
 
-     // console.log(Constants.PowerBiReport,"power bi url")
-     
+      let a = document.createElement("a");
+      a.href = Constants.PowerBiReport
+
+      // console.log(Constants.PowerBiReport,"power bi url")
+
       document.body.appendChild(a);
 
       a.click();
@@ -3279,48 +3276,43 @@ export default class UserAccessManagement extends React.Component<
   }
 
 
-public modifydata = (list:any,toupdate:any)=>
-{
-  var setDropDownValue: any = [];
-  if(list.length>0)
-  {
-   // console.log(list);
-    debugger;
-  for(let i=0;i<list.length;i++)
-  {
-    let value=list[i].label;
-    let itemvalue=list[i].value;
-    switch(value)
-    {
-      case "User Admin":setDropDownValue.push({label:'UAM - Master Data Manager',value:itemvalue});break;
-      case "Auditor":setDropDownValue.push({label:'Sharia Repository - Auditor',value:itemvalue});break;
-      case "ISCG Staff":setDropDownValue.push({label:'Sharia Repository - ISCG Staff',value:itemvalue});break;
-      case "ISCG Staff Admin":setDropDownValue.push({label:'Sharia Repository - Master Data Manager',value:itemvalue});break;
-      case "ELibrary Admin":setDropDownValue.push({label:'Alif E-Library – Master Data Manager',value:itemvalue});break;
-      case "ELibrary-ISCG Staff":setDropDownValue.push({label:'Alif E-Library - ISCG Staff',value:itemvalue});break;
-      case "Helpdesk Manager-Sharia Research":setDropDownValue.push({label:'Sharia Research - Helpdesk Manager',value:itemvalue});break;
-      case "ISCG Staff-ShariaResearch":setDropDownValue.push({label:'Sharia Research - ISCG Staff',value:itemvalue});break;
-      case "Master Data Admin-ShariaResearch":setDropDownValue.push({label:'Sharia Research - Master Data Manager',value:itemvalue});break;
-      case "Helpdesk Manager":setDropDownValue.push({label:'Sharia Helpdesk - Helpdesk Manager',value:itemvalue});break;
-      case "ISCG Staff - Helpdesk":setDropDownValue.push({label:'Sharia Helpdesk - ISCG Staff',value:itemvalue});break;
-      case "Master Data Admin - Helpdesk":setDropDownValue.push({label:'Sharia Helpdesk - Master Data Manager',value:itemvalue});break;
-      case "User Management Admin":setDropDownValue.push({label:'UAM - Master Data Manager',value:itemvalue});break;
-      case "SouqAlMaal Master Data Admin":setDropDownValue.push({label:'SouqAlMaal - Master Data Manager',value:itemvalue});break;
-      case "Master Data Admin - Apex":setDropDownValue.push({label:'Apex - Master Data Manager',value:itemvalue});break;
-      case "Master Data Admin - Tawazun":setDropDownValue.push({label:'Tawazun - Master Data Manager',value:itemvalue});break;
-      default:setDropDownValue.push({label:value,value:itemvalue});
-     
+  public modifydata = (list: any, toupdate: any) => {
+    var setDropDownValue: any = [];
+    if (list.length > 0) {
+      // console.log(list);
+      debugger;
+      for (let i = 0; i < list.length; i++) {
+        let value = list[i].label;
+        let itemvalue = list[i].value;
+        switch (value) {
+          case "User Admin": setDropDownValue.push({ label: 'UAM - Master Data Manager', value: itemvalue }); break;
+          case "Auditor": setDropDownValue.push({ label: 'Sharia Repository - Auditor', value: itemvalue }); break;
+          case "ISCG Staff": setDropDownValue.push({ label: 'Sharia Repository - ISCG Staff', value: itemvalue }); break;
+          case "ISCG Staff Admin": setDropDownValue.push({ label: 'Sharia Repository - Master Data Manager', value: itemvalue }); break;
+          case "ELibrary Admin": setDropDownValue.push({ label: 'Alif E-Library – Master Data Manager', value: itemvalue }); break;
+          case "ELibrary-ISCG Staff": setDropDownValue.push({ label: 'Alif E-Library - ISCG Staff', value: itemvalue }); break;
+          case "Helpdesk Manager-Sharia Research": setDropDownValue.push({ label: 'Sharia Research - Helpdesk Manager', value: itemvalue }); break;
+          case "ISCG Staff-ShariaResearch": setDropDownValue.push({ label: 'Sharia Research - ISCG Staff', value: itemvalue }); break;
+          case "Master Data Admin-ShariaResearch": setDropDownValue.push({ label: 'Sharia Research - Master Data Manager', value: itemvalue }); break;
+          case "Helpdesk Manager": setDropDownValue.push({ label: 'Sharia Helpdesk - Helpdesk Manager', value: itemvalue }); break;
+          case "ISCG Staff - Helpdesk": setDropDownValue.push({ label: 'Sharia Helpdesk - ISCG Staff', value: itemvalue }); break;
+          case "Master Data Admin - Helpdesk": setDropDownValue.push({ label: 'Sharia Helpdesk - Master Data Manager', value: itemvalue }); break;
+          case "User Management Admin": setDropDownValue.push({ label: 'UAM - Master Data Manager', value: itemvalue }); break;
+          case "SouqAlMaal Master Data Admin": setDropDownValue.push({ label: 'SouqAlMaal - Master Data Manager', value: itemvalue }); break;
+          case "Master Data Admin - Apex": setDropDownValue.push({ label: 'Apex - Master Data Manager', value: itemvalue }); break;
+          case "Master Data Admin - Tawazun": setDropDownValue.push({ label: 'Tawazun - Master Data Manager', value: itemvalue }); break;
+          default: setDropDownValue.push({ label: value, value: itemvalue });
+
+        }
+      }
+      if (toupdate === "fromgetbyid") {
+        this.setState({ applicationSelectedRoles: setDropDownValue })
+      }
+      else if (toupdate === "setapplicationroles") {
+        this.setState({ roles: setDropDownValue })
+      }
     }
   }
-  if(toupdate==="fromgetbyid"){
-  this.setState({applicationSelectedRoles:setDropDownValue})
-  }
-  else if(toupdate==="setapplicationroles")
-  {
-    this.setState({roles:setDropDownValue})
-  }
-  }
-}
 
   public ShowDatainUAM = (e: any) => {
     var setDropDownValue: any = [];
@@ -3404,7 +3396,7 @@ public modifydata = (list:any,toupdate:any)=>
     }
 
 
-   // console.log(setDropDownValue)
+    // console.log(setDropDownValue)
 
   }
 }
