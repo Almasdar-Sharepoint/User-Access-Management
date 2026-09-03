@@ -44,6 +44,15 @@ jobs:
         env:
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
 
+      - name: Verify generated config
+        shell: bash
+        run: |
+          if grep -q 'clientId: ""' src/webparts/userAccessManagement/config.ts; then
+            echo "ERROR: Client ID was not generated"
+            exit 1
+          else
+            echo "DEV config contains a Client ID"
+          fi
 
       - name: Install dependencies
         run: npm ci
