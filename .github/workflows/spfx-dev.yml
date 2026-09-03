@@ -22,3 +22,6 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Build SPFx solution
+        run: npx gulp bundle
