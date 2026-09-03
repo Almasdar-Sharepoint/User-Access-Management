@@ -1,0 +1,44 @@
+name: SPFx CI
+
+on:
+  push:
+    branches:
+      - main
+      - Dev
+
+  pull_request:
+    branches:
+      - main
+      - Dev
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '16.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Clean
+        run: npx gulp clean
+
+      - name: Bundle SPFx
+        run: npx gulp bundle --ship
+
+      - name: Package SPFx solution
+        run: npx gulp package-solution --ship
+
+      - name: Upload SPFx package
+        uses: actions/upload-artifact@v4
+        with:
+          name: spfx-package
+          path: sharepoint/solution/*.sppkg
