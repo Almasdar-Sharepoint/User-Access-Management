@@ -1,6 +1,9 @@
 name: SPFx DEV CI/CD
 
 on:
+  push:
+    branches:
+      - Dev
   workflow_dispatch:
 
 jobs:
