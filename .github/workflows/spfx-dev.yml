@@ -65,6 +65,10 @@ jobs:
           tenant-id: ${{ vars.AZURE_TENANT_ID }}
           subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
+      - name: Verify Azure Login
+        run: |
+         az account show
+
       - name: Install dependencies
         run: npm ci
 
