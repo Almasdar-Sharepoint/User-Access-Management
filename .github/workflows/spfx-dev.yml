@@ -73,7 +73,7 @@ jobs:
         run: |
           az rest \
           --method GET \
-           --url "https://graph.microsoft.com/v1.0/sites/acuvatehyd.sharepoint.com:/sites/Al-masdar/AppCatalog"
+           --url "https://graph.microsoft.com/v1.0/sites/acuvatehyd.sharepoint.com:/sites/Al-masdar"
 
       - name: Install dependencies
         run: npm ci
