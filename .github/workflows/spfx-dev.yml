@@ -69,11 +69,11 @@ jobs:
         run: |
          az account show
 
-      - name: Verify SharePoint Access
+      - name: Verify SharePoint App Catalog Access
         run: |
           az rest \
           --method GET \
-          --url "https://graph.microsoft.com/v1.0/sites?search=*"
+           --url "https://graph.microsoft.com/v1.0/sites/acuvatehyd.sharepoint.com:/sites/Al-masdar/AppCatalog"
 
       - name: Install dependencies
         run: npm ci
