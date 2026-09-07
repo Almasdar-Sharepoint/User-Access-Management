@@ -72,8 +72,22 @@ jobs:
       - name: Find App Catalog Library
         run: |
           az rest \
-          --method GET \
-          --url "https://graph.microsoft.com/v1.0/sites/acuvatehyd.sharepoint.com:/sites/Al-masdar:/drives"
+            --method GET \
+            --url "https://graph.microsoft.com/v1.0/sites/acuvatehyd.sharepoint.com:/sites/Al-masdar:/drives"
+
+      - name: Test App Catalog Write Access
+        shell: bash
+        run: |
+          echo "CI/CD test - $(date -u)" > appcatalog-ci-test.txt
+
+          az rest \
+            --method PUT \
+            --url "https://graph.microsoft.com/v1.0/sites/acuvatehyd.sharepoint.com:/sites/Al-masdar:/drives/b!A8no5pybkEO2M0GpblrVMYeizo7N2bhFuIuCagwelrW8cLc5PKvXTLdmIrJBsb5G/root:/appcatalog-ci-test.txt:/content" \
+            --headers "Content-Type=text/plain" \
+            --body @appcatalog-ci-test.txt
+
+          echo "App Catalog write test completed successfully"
+
 
       - name: Install dependencies
         run: npm ci
