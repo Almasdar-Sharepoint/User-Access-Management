@@ -84,17 +84,3 @@ jobs:
 
       - name: Package SPFx solution
         run: npx gulp package-solution --ship
-
-      - name: Upload SPFx package to App Catalog
-        shell: bash
-        run: |
-          echo "Uploading SPFx package to App Catalog..."
-
-          az rest \
-            --method PUT \
-            --url "https://graph.microsoft.com/v1.0/drives/b!A8no5pybkEO2M0GpblrVMYeizo7N2bhFuIuCagwelrW8cLc5PKvXTLdmIrJBsb5G/items/root:/user-access-management.sppkg:/content" \
-            --headers "Content-Type=application/octet-stream" \
-            --body @solution/user-access-management.sppkg
-
-          echo "SPFx package uploaded successfully"
-
