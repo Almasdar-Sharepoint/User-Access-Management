@@ -75,18 +75,6 @@ jobs:
             --method GET \
             --url "https://graph.microsoft.com/v1.0/sites/acuvatehyd.sharepoint.com:/sites/Al-masdar:/drives"
 
-      - name: Test App Catalog Write Access
-        shell: bash
-        run: |
-          echo "CI/CD test - $(date -u)" > appcatalog-ci-test.txt
-
-          az rest \
-            --method PUT \
-            --url "https://graph.microsoft.com/v1.0/drives/b!A8no5pybkEO2M0GpblrVMYeizo7N2bhFuIuCagwelrW8cLc5PKvXTLdmIrJBsb5G/items/root:/appcatalog-ci-test.txt:/content" \
-            --headers "Content-Type=text/plain" \
-            --body @appcatalog-ci-test.txt
-
-          echo "App Catalog write test completed successfully"
 
       - name: Install dependencies
         run: npm ci
@@ -97,9 +85,16 @@ jobs:
       - name: Package SPFx solution
         run: npx gulp package-solution --ship
 
-      - name: Upload SPFx package
-        uses: actions/upload-artifact@v4
-        with:
-          name: user-access-management-dev
-          path: solution/user-access-management.sppkg
+      - name: Upload SPFx package to App Catalog
+        shell: bash
+        run: |
+          echo "Uploading SPFx package to App Catalog..."
+
+          az rest \
+            --method PUT \
+            --url "https://graph.microsoft.com/v1.0/drives/b!A8no5pybkEO2M0GpblrVMYeizo7N2bhFuIuCagwelrW8cLc5PKvXTLdmIrJBsb5G/items/root:/user-access-management.sppkg:/content" \
+            --headers "Content-Type=application/octet-stream" \
+            --body @solution/user-access-management.sppkg
+
+          echo "SPFx package uploaded successfully"
 
