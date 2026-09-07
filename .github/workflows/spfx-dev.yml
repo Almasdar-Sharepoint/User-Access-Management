@@ -84,3 +84,7 @@ jobs:
 
       - name: Package SPFx solution
         run: npx gulp package-solution --ship
+
+      - name: Install CLI for Microsoft 365
+        run: npm install -g @pnp/cli-microsoft365
+
