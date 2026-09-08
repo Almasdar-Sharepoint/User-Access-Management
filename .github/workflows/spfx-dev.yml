@@ -131,3 +131,7 @@ jobs:
             --url "https://graph.microsoft.com/v1.0/drives/b!A8no5pybkEO2M0GpblrVMYeizo7N2bhFuIuCagwelrW8cLc5PKvXTLdmIrJBsb5G/root:/user-access-management.sppkg" \
             --method get
 
+      - name: Check SharePoint App Catalog
+        run: |
+          m365 spo app list \
+            --siteUrl "https://acuvatehyd.sharepoint.com/sites/Al-masdar"
