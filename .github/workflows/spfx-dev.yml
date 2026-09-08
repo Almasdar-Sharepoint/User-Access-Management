@@ -96,4 +96,10 @@ jobs:
       - name: Check Microsoft 365 CLI version
         run: m365 --version
 
+      - name: Login to Microsoft 365 CLI
+        run: |
+          m365 login \
+            --authType federatedIdentity \
+            --appId "${{ vars.AZURE_CLIENT_ID }}" \
+            --tenant "${{ vars.AZURE_TENANT_ID }}"
 
