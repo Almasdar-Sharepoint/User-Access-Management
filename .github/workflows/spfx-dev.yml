@@ -88,3 +88,7 @@ jobs:
       - name: Install CLI for Microsoft 365
         run: npm install -g @pnp/cli-microsoft365
 
+      - name: Check Microsoft 365 CLI version
+        run: m365 --version
+
+
