@@ -158,9 +158,40 @@ jobs:
             --appCatalogScope sitecollection \
             --appCatalogUrl "https://acuvatehyd.sharepoint.com/sites/Al-masdar"
 
-      - name: Verify deployed SPFx app
+      - name: Verify SPFx deployment
+        shell: bash
         run: |
-          m365 spo app get \
+          RESPONSE=$(m365 spo app get \
             --name "user-access-management.sppkg" \
             --appCatalogScope sitecollection \
-            --appCatalogUrl "https://acuvatehyd.sharepoint.com/sites/Al-masdar"
+            --appCatalogUrl "https://acuvatehyd.sharepoint.com/sites/Al-masdar")
+
+          echo "$RESPONSE"
+
+          DEPLOYED=$(echo "$RESPONSE" | jq -r '.Deployed')
+          CURRENT_VERSION_DEPLOYED=$(echo "$RESPONSE" | jq -r '.CurrentVersionDeployed')
+          VALID_PACKAGE=$(echo "$RESPONSE" | jq -r '.IsValidAppPackage')
+          ERROR_MESSAGE=$(echo "$RESPONSE" | jq -r '.ErrorMessage')
+
+          if [ "$DEPLOYED" != "true" ]; then
+            echo "ERROR: App is not deployed"
+            exit 1
+          fi
+
+          if [ "$CURRENT_VERSION_DEPLOYED" != "true" ]; then
+            echo "ERROR: Current version is not deployed"
+            exit 1
+          fi
+
+          if [ "$VALID_PACKAGE" != "true" ]; then
+            echo "ERROR: Package is not valid"
+            exit 1
+          fi
+
+          if [ "$ERROR_MESSAGE" != "No errors." ]; then
+            echo "ERROR: SharePoint reported: $ERROR_MESSAGE"
+            exit 1
+          fi
+
+          echo "SPFx deployment verified successfully."
+
