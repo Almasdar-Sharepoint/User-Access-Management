@@ -138,10 +138,10 @@ jobs:
             --url "https://acuvatehyd.sharepoint.com/sites/Al-masdar/_api/web/tenantappcatalog/availableApps" \
             --method get
             
-      - name: Check SPFx app deploy examples
+      - name: Deploy SPFx package to DEV
         run: |
-          m365 spo app deploy -h examples
-
-
-
+          m365 spo app deploy \
+            --name "user-access-management.sppkg" \
+            --appCatalogScope sitecollection \
+            --appCatalogUrl "https://acuvatehyd.sharepoint.com/sites/Al-masdar"
 
