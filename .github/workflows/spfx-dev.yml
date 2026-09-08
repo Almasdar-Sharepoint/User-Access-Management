@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     environment: DEV
-    
+
     permissions:
       id-token: write
       contents: read
@@ -65,23 +65,8 @@ jobs:
           tenant-id: ${{ vars.AZURE_TENANT_ID }}
           subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Verify Azure Login
-        run: |
-         az account show
-
-      - name: Find App Catalog Library
-        run: |
-          az rest \
-            --method GET \
-            --url "https://graph.microsoft.com/v1.0/sites/acuvatehyd.sharepoint.com:/sites/Al-masdar:/drives"
-
-
       - name: Install dependencies
         run: npm ci
-
-      - name: Check SPFx solution version
-        run: |
-          node -e "const p=require('./config/package-solution.json'); console.log('SPFx version:', p.solution.version)"
 
       - name: Build SPFx solution
         run: npx gulp bundle
@@ -97,31 +82,16 @@ jobs:
       - name: Install CLI for Microsoft 365
         run: npm install -g @pnp/cli-microsoft365
 
-      - name: Check Microsoft 365 CLI version
-        run: m365 --version
-
       - name: Login to Microsoft 365 CLI
         run: |
           m365 login \
             --authType federatedIdentity \
             --appId "${{ vars.AZURE_CLIENT_ID }}" \
             --tenant "${{ vars.AZURE_TENANT_ID }}"
-            
+
       - name: Verify Microsoft 365 CLI login
         run: |
           m365 status
-
-      - name: Verify App Catalog access
-        run: |
-          m365 request \
-            --url "https://graph.microsoft.com/v1.0/drives/b!A8no5pybkEO2M0GpblrVMYeizo7N2bhFuIuCagwelrW8cLc5PKvXTLdmIrJBsb5G/root/children" \
-            --method get
-
-      - name: Locate SPFx package
-        shell: bash
-        run: |
-          echo "Searching for SPFx package..."
-          find . -type f -name "*.sppkg" -print
 
       - name: Add SPFx package to DEV App Catalog
         run: |
@@ -129,27 +99,14 @@ jobs:
             --filePath "./sharepoint/solution/user-access-management.sppkg" \
             --overwrite \
             --appCatalogScope sitecollection \
-            --appCatalogUrl "https://acuvatehyd.sharepoint.com/sites/Al-masdar"
-            
+            --appCatalogUrl "${{ vars.SP_APP_CATALOG_URL }}"
+
       - name: Verify SPFx app in DEV App Catalog
         run: |
           m365 spo app get \
             --name "user-access-management.sppkg" \
             --appCatalogScope sitecollection \
-            --appCatalogUrl "https://acuvatehyd.sharepoint.com/sites/Al-masdar"
-
-      - name: Verify SharePoint API access
-        run: |
-          m365 request \
-            --url "https://acuvatehyd.sharepoint.com/sites/Al-masdar/_api/web/tenantappcatalog/availableApps" \
-            --method get
-            
-      - name: Get SPFx app from App Catalog
-        run: |
-          m365 spo app get \
-            --name "user-access-management.sppkg" \
-            --appCatalogScope sitecollection \
-            --appCatalogUrl "https://acuvatehyd.sharepoint.com/sites/Al-masdar"
+            --appCatalogUrl "${{ vars.SP_APP_CATALOG_URL }}"
 
       - name: Deploy SPFx package to DEV
         run: |
@@ -164,7 +121,7 @@ jobs:
           RESPONSE=$(m365 spo app get \
             --name "user-access-management.sppkg" \
             --appCatalogScope sitecollection \
-           --appCatalogUrl "${{ vars.SP_APP_CATALOG_URL }}")
+            --appCatalogUrl "${{ vars.SP_APP_CATALOG_URL }}")
 
           echo "$RESPONSE"
 
@@ -194,4 +151,3 @@ jobs:
           fi
 
           echo "SPFx deployment verified successfully."
-
