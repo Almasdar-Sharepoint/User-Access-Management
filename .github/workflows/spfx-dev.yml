@@ -107,7 +107,9 @@ jobs:
         run: |
           m365 status
 
-      - name: Verify SharePoint access
+      - name: Debug SharePoint access
         run: |
           m365 spo site get \
-            --url "https://acuvatehyd.sharepoint.com/sites/Al-masdar"
+            --url "https://acuvatehyd.sharepoint.com/sites/Al-masdar" \
+            --verbose
+
