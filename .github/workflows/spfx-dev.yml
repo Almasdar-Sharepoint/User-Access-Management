@@ -85,6 +85,11 @@ jobs:
       - name: Package SPFx solution
         run: npx gulp package-solution --ship
 
+      - name: Setup Node.js 20 for Microsoft 365 CLI
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
       - name: Install CLI for Microsoft 365
         run: npm install -g @pnp/cli-microsoft365
 
