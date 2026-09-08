@@ -113,5 +113,10 @@ jobs:
             --url "https://graph.microsoft.com/v1.0/drives/b!A8no5pybkEO2M0GpblrVMYeizo7N2bhFuIuCagwelrW8cLc5PKvXTLdmIrJBsb5G/root/children" \
             --method get
 
+      - name: Locate SPFx package
+        shell: bash
+        run: |
+          echo "Searching for SPFx package..."
+          find . -type f -name "*.sppkg" -print
 
 
