@@ -102,4 +102,8 @@ jobs:
             --authType federatedIdentity \
             --appId "${{ vars.AZURE_CLIENT_ID }}" \
             --tenant "${{ vars.AZURE_TENANT_ID }}"
+            
+      - name: Verify Microsoft 365 CLI login
+        run: |
+          m365 status
 
