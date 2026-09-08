@@ -123,6 +123,6 @@ jobs:
         run: |
           m365 request \
             --url "https://graph.microsoft.com/v1.0/drives/b!A8no5pybkEO2M0GpblrVMYeizo7N2bhFuIuCagwelrW8cLc5PKvXTLdmIrJBsb5G/root:/user-access-management.sppkg:/content" \
-            --method PUT \
+            --method put \
             --file "./sharepoint/solution/user-access-management.sppkg"
 
