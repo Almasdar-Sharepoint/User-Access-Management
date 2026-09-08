@@ -135,7 +135,7 @@ jobs:
         run: |
           m365 request \
             --url "https://acuvatehyd.sharepoint.com/sites/Al-masdar/_api/web/tenantappcatalog/availableApps" \
-            --method GET
+            --method get
 
 
 
