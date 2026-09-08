@@ -127,11 +127,12 @@ jobs:
             --appCatalogScope sitecollection \
             --appCatalogUrl "https://acuvatehyd.sharepoint.com/sites/Al-masdar"
             
-      - name: Verify SPFx package in App Catalog
+      - name: Verify SPFx app in DEV App Catalog
         run: |
-          m365 request \
-            --url "https://graph.microsoft.com/v1.0/drives/b!A8no5pybkEO2M0GpblrVMYeizo7N2bhFuIuCagwelrW8cLc5PKvXTLdmIrJBsb5G/root:/user-access-management.sppkg" \
-            --method get
+          m365 spo app get \
+            --name "user-access-management.sppkg" \
+            --appCatalogScope sitecollection \
+            --appCatalogUrl "https://acuvatehyd.sharepoint.com/sites/Al-masdar"
 
       - name: Verify SharePoint API access
         run: |
