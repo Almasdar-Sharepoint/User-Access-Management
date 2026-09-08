@@ -107,9 +107,10 @@ jobs:
         run: |
           m365 status
 
-      - name: Debug SharePoint access
+      - name: Verify Microsoft Graph access
         run: |
-          m365 spo site get \
-            --url "https://acuvatehyd.sharepoint.com/sites/Al-masdar" \
-            --verbose
+          m365 request \
+            --url "https://graph.microsoft.com/v1.0/sites/acuvatehyd.sharepoint.com:/sites/Al-masdar:/drives" \
+            --method GET
+
 
