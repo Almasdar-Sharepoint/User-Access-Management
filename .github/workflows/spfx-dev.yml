@@ -147,4 +147,10 @@ jobs:
             --appCatalogScope sitecollection \
             --appCatalogUrl "https://acuvatehyd.sharepoint.com/sites/Al-masdar"
 
+      - name: Deploy SPFx package to DEV
+        run: |
+          m365 spo app deploy \
+            --name "user-access-management.sppkg" \
+            --appCatalogScope sitecollection \
+            --appCatalogUrl "https://acuvatehyd.sharepoint.com/sites/Al-masdar"
 
