@@ -111,6 +111,6 @@ jobs:
         run: |
           m365 request \
             --url "https://graph.microsoft.com/v1.0/sites/acuvatehyd.sharepoint.com:/sites/Al-masdar:/drives" \
-            --method GET
+            --method get
 
 
