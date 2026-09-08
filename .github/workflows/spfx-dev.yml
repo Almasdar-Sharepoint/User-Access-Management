@@ -79,6 +79,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Check SPFx solution version
+        run: |
+          node -e "const p=require('./config/package-solution.json'); console.log('SPFx version:', p.solution.version)"
+
       - name: Build SPFx solution
         run: npx gulp bundle
 
