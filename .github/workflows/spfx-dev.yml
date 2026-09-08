@@ -132,9 +132,13 @@ jobs:
             --url "https://graph.microsoft.com/v1.0/drives/b!A8no5pybkEO2M0GpblrVMYeizo7N2bhFuIuCagwelrW8cLc5PKvXTLdmIrJBsb5G/root:/user-access-management.sppkg" \
             --method get
 
-      - name: Check SPFx app deploy syntax
+      - name: Deploy SPFx package to DEV
         run: |
-          m365 spo app deploy -h
+          m365 spo app deploy \
+            --name "user-access-management.sppkg" \
+            --appCatalogScope sitecollection \
+            --appCatalogUrl "https://acuvatehyd.sharepoint.com/sites/Al-masdar/AppCatalog"
+
 
 
 
