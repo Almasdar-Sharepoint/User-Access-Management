@@ -1,157 +1,212 @@
 name: SPFx DEV CI/CD
 
 on:
-  pull_request:
-    branches:
-      - Dev
+pull_request:
+branches:
+- Dev
 
-  push:
-    branches:
-      - Dev
+push:
+branches:
+- Dev
 
-  workflow_dispatch:
+workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
 
-    permissions:
-      id-token: write
-      contents: read
+pr-ci:
+if: github.event_name == 'pull_request'
+runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+permissions:
+  contents: read
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '16.20.2'
-          cache: 'npm'
+steps:
+  - name: Checkout code
+    uses: actions/checkout@v4
 
-      - name: Verify DEV Client ID
-        shell: bash
-        run: |
-          if [ -z "$CLIENT_ID" ]; then
-            echo "CLIENT_ID is NOT available"
-            exit 1
-          else
-            echo "CLIENT_ID is available"
-          fi
-        env:
-          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+  - name: Setup Node.js
+    uses: actions/setup-node@v4
+    with:
+      node-version: '16.20.2'
+      cache: 'npm'
 
-      - name: Generate DEV config
-        shell: bash
-        run: |
-          cat > src/webparts/userAccessManagement/config.ts <<EOF
-          export const appConfig = {
-            clientId: "${CLIENT_ID}"
-          };
-          EOF
-        env:
-          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+  - name: Install dependencies
+    run: npm ci
 
-      - name: Verify generated config
-        shell: bash
-        run: |
-          if grep -q 'clientId: ""' src/webparts/userAccessManagement/config.ts; then
-            echo "ERROR: Client ID was not generated"
-            exit 1
-          else
-            echo "DEV config contains a Client ID"
-          fi
+  - name: Build SPFx solution
+    run: npx gulp bundle
 
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          client-id: ${{ vars.AZURE_CLIENT_ID }}
-          tenant-id: ${{ vars.AZURE_TENANT_ID }}
-          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+  - name: Package SPFx solution
+    run: npx gulp package-solution --ship
 
-      - name: Install dependencies
-        run: npm ci
+build:
+if: github.event_name == 'push'
+runs-on: ubuntu-latest
 
-      - name: Build SPFx solution
-        run: npx gulp bundle
+permissions:
+  id-token: write
+  contents: read
 
-      - name: Package SPFx solution
-        run: npx gulp package-solution --ship
+steps:
+  - name: Checkout code
+    uses: actions/checkout@v4
 
-      - name: Setup Node.js 20 for Microsoft 365 CLI
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+  - name: Setup Node.js
+    uses: actions/setup-node@v4
+    with:
+      node-version: '16.20.2'
+      cache: 'npm'
 
-      - name: Install CLI for Microsoft 365
-        run: npm install -g @pnp/cli-microsoft365
+  - name: Verify DEV Client ID
+    shell: bash
+    run: |
+      if [ -z "$CLIENT_ID" ]; then
+        echo "CLIENT_ID is NOT available"
+        exit 1
+      else
+        echo "CLIENT_ID is available"
+      fi
+    env:
+      CLIENT_ID: ${{ secrets.CLIENT_ID }}
 
-      - name: Login to Microsoft 365 CLI
-        run: |
-          m365 login \
-            --authType federatedIdentity \
-            --appId "${{ vars.AZURE_CLIENT_ID }}" \
-            --tenant "${{ vars.AZURE_TENANT_ID }}"
+  - name: Generate DEV config
+    shell: bash
+    run: |
+      cat > src/webparts/userAccessManagement/config.ts <<EOF
+      export const appConfig = {
+        clientId: "${CLIENT_ID}"
+      };
+      EOF
+    env:
+      CLIENT_ID: ${{ secrets.CLIENT_ID }}
 
-      - name: Verify Microsoft 365 CLI login
-        run: |
-          m365 status
+  - name: Verify generated config
+    shell: bash
+    run: |
+      if grep -q 'clientId: ""' src/webparts/userAccessManagement/config.ts; then
+        echo "ERROR: Client ID was not generated"
+        exit 1
+      else
+        echo "DEV config contains a Client ID"
+      fi
 
-      - name: Add SPFx package to DEV App Catalog
-        run: |
-          m365 spo app add \
-            --filePath "./sharepoint/solution/user-access-management.sppkg" \
-            --overwrite \
-            --appCatalogScope sitecollection \
-            --appCatalogUrl "${{ vars.SP_APP_CATALOG_URL }}"
+  - name: Install dependencies
+    run: npm ci
 
-      - name: Verify SPFx app in DEV App Catalog
-        run: |
-          m365 spo app get \
-            --name "user-access-management.sppkg" \
-            --appCatalogScope sitecollection \
-            --appCatalogUrl "${{ vars.SP_APP_CATALOG_URL }}"
+  - name: Build SPFx solution
+    run: npx gulp bundle
 
-      - name: Deploy SPFx package to DEV
-        run: |
-          m365 spo app deploy \
-            --name "user-access-management.sppkg" \
-            --appCatalogScope sitecollection \
-            --appCatalogUrl "${{ vars.SP_APP_CATALOG_URL }}"
+  - name: Package SPFx solution
+    run: npx gulp package-solution --ship
 
-      - name: Verify SPFx deployment
-        shell: bash
-        run: |
-          RESPONSE=$(m365 spo app get \
-            --name "user-access-management.sppkg" \
-            --appCatalogScope sitecollection \
-            --appCatalogUrl "${{ vars.SP_APP_CATALOG_URL }}")
+  - name: Upload SPFx package
+    uses: actions/upload-artifact@v4
+    with:
+      name: spfx-package
+      path: sharepoint/solution/user-access-management.sppkg
 
-          echo "$RESPONSE"
+  deploy-dev:
+  if: github.event_name == 'push'
+  needs: build
 
-          DEPLOYED=$(echo "$RESPONSE" | jq -r '.Deployed')
-          CURRENT_VERSION_DEPLOYED=$(echo "$RESPONSE" | jq -r '.CurrentVersionDeployed')
-          VALID_PACKAGE=$(echo "$RESPONSE" | jq -r '.IsValidAppPackage')
-          ERROR_MESSAGE=$(echo "$RESPONSE" | jq -r '.ErrorMessage')
+runs-on: ubuntu-latest
 
-          if [ "$DEPLOYED" != "true" ]; then
-            echo "ERROR: App is not deployed"
-            exit 1
-          fi
+environment:
+  name: DEV
 
-          if [ "$CURRENT_VERSION_DEPLOYED" != "true" ]; then
-            echo "ERROR: Current version is not deployed"
-            exit 1
-          fi
+permissions:
+  id-token: write
+  contents: read
 
-          if [ "$VALID_PACKAGE" != "true" ]; then
-            echo "ERROR: Package is not valid"
-            exit 1
-          fi
+steps:
 
-          if [ "$ERROR_MESSAGE" != "No errors." ]; then
-            echo "ERROR: SharePoint reported: $ERROR_MESSAGE"
-            exit 1
-          fi
+  - name: Download SPFx package
+    uses: actions/download-artifact@v4
+    with:
+      name: spfx-package
+      path: ./sharepoint/solution
 
-          echo "SPFx deployment verified successfully."
+  - name: Setup Node.js 20 for Microsoft 365 CLI
+    uses: actions/setup-node@v4
+    with:
+      node-version: '20'
+
+  - name: Install CLI for Microsoft 365
+    run: npm install -g @pnp/cli-microsoft365
+
+  - name: Azure Login
+    uses: azure/login@v2
+    with:
+      client-id: ${{ vars.AZURE_CLIENT_ID }}
+      tenant-id: ${{ vars.AZURE_TENANT_ID }}
+      subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+  - name: Login to Microsoft 365 CLI
+    run: |
+      m365 login \
+        --authType federatedIdentity \
+        --appId "${{ vars.AZURE_CLIENT_ID }}" \
+        --tenant "${{ vars.AZURE_TENANT_ID }}"
+
+  - name: Verify Microsoft 365 CLI login
+    run: |
+      m365 status
+
+  - name: Add SPFx package to DEV App Catalog
+    run: |
+      m365 spo app add \
+        --filePath "./sharepoint/solution/user-access-management.sppkg" \
+        --overwrite \
+        --appCatalogScope sitecollection \
+        --appCatalogUrl "${{ vars.SP_APP_CATALOG_URL }}"
+
+  - name: Verify SPFx app in DEV App Catalog
+    run: |
+      m365 spo app get \
+        --name "user-access-management.sppkg" \
+        --appCatalogScope sitecollection \
+        --appCatalogUrl "${{ vars.SP_APP_CATALOG_URL }}"
+
+  - name: Deploy SPFx package to DEV
+    run: |
+      m365 spo app deploy \
+        --name "user-access-management.sppkg" \
+        --appCatalogScope sitecollection \
+        --appCatalogUrl "${{ vars.SP_APP_CATALOG_URL }}"
+
+  - name: Verify SPFx deployment
+    shell: bash
+    run: |
+      RESPONSE=$(m365 spo app get \
+        --name "user-access-management.sppkg" \
+        --appCatalogScope sitecollection \
+        --appCatalogUrl "${{ vars.SP_APP_CATALOG_URL }}")
+
+      echo "$RESPONSE"
+
+      DEPLOYED=$(echo "$RESPONSE" | jq -r '.Deployed')
+      CURRENT_VERSION_DEPLOYED=$(echo "$RESPONSE" | jq -r '.CurrentVersionDeployed')
+      VALID_PACKAGE=$(echo "$RESPONSE" | jq -r '.IsValidAppPackage')
+      ERROR_MESSAGE=$(echo "$RESPONSE" | jq -r '.ErrorMessage')
+
+      if [ "$DEPLOYED" != "true" ]; then
+        echo "ERROR: App is not deployed"
+        exit 1
+      fi
+
+      if [ "$CURRENT_VERSION_DEPLOYED" != "true" ]; then
+        echo "ERROR: Current version is not deployed"
+        exit 1
+      fi
+
+      if [ "$VALID_PACKAGE" != "true" ]; then
+        echo "ERROR: Package is not valid"
+        exit 1
+      fi
+
+      if [ "$ERROR_MESSAGE" != "No errors." ]; then
+        echo "ERROR: SharePoint reported: $ERROR_MESSAGE"
+        exit 1
+      fi
+
+      echo "SPFx deployment verified successfully."
