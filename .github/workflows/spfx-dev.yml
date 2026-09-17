@@ -57,13 +57,6 @@ jobs:
             echo "DEV config contains a Client ID"
           fi
 
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          client-id: ${{ vars.AZURE_CLIENT_ID }}
-          tenant-id: ${{ vars.AZURE_TENANT_ID }}
-          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-
       - name: Install dependencies
         run: npm ci
 
@@ -79,10 +72,33 @@ jobs:
           name: spfx-package
           path: sharepoint/solution/user-access-management.sppkg
 
+  deploy-dev:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: DEV
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Download SPFx package
+        uses: actions/download-artifact@v4
+        with:
+          name: spfx-package
+          path: sharepoint/solution
+          
       - name: Setup Node.js 20 for Microsoft 365 CLI
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
       - name: Install CLI for Microsoft 365
         run: npm install -g @pnp/cli-microsoft365
