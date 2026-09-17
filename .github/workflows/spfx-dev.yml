@@ -1,9 +1,14 @@
 name: SPFx DEV CI/CD
 
 on:
+  pull_request:
+    branches:
+      - Dev
+
   push:
     branches:
       - Dev
+
   workflow_dispatch:
 
 jobs:
