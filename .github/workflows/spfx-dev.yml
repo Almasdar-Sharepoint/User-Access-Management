@@ -1,46 +1,15 @@
 name: SPFx DEV CI/CD
 
 on:
-  pull_request:
-    branches:
-      - Dev
-
   push:
     branches:
       - Dev
-
   workflow_dispatch:
 
 jobs:
-  pr-ci:
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '16.20.2'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build SPFx solution
-        run: npx gulp bundle
-
-      - name: Package SPFx solution
-        run: npx gulp package-solution --ship
-
   build:
-    if: github.event_name == 'push'
     runs-on: ubuntu-latest
+    environment: DEV
 
     permissions:
       id-token: write
@@ -89,6 +58,13 @@ jobs:
             echo "DEV config contains a Client ID"
           fi
 
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
       - name: Install dependencies
         run: npm ci
 
@@ -98,31 +74,6 @@ jobs:
       - name: Package SPFx solution
         run: npx gulp package-solution --ship
 
-      - name: Upload SPFx package
-        uses: actions/upload-artifact@v4
-        with:
-          name: spfx-package
-          path: sharepoint/solution/user-access-management.sppkg
-
-  deploy-dev:
-    if: github.event_name == 'push'
-    needs: build
-    runs-on: ubuntu-latest
-
-    environment:
-      name: DEV
-
-    permissions:
-      id-token: write
-      contents: read
-
-    steps:
-      - name: Download SPFx package
-        uses: actions/download-artifact@v4
-        with:
-          name: spfx-package
-          path: ./sharepoint/solution
-
       - name: Setup Node.js 20 for Microsoft 365 CLI
         uses: actions/setup-node@v4
         with:
@@ -130,13 +81,6 @@ jobs:
 
       - name: Install CLI for Microsoft 365
         run: npm install -g @pnp/cli-microsoft365
-
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          client-id: ${{ vars.AZURE_CLIENT_ID }}
-          tenant-id: ${{ vars.AZURE_TENANT_ID }}
-          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
       - name: Login to Microsoft 365 CLI
         run: |
