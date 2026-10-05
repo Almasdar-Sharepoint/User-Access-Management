@@ -187,7 +187,6 @@ export default class UserAccessManagement extends React.Component<
   public async componentDidMount() {
 
     await this.props.context.aadTokenProviderFactory.getTokenProvider().then((provider: any) => {
-      // adding extra line under tocken generation
       // provider.getToken("b9fd59c2-03b9-4540-9c4d-1a255a3889ea").then((token: any) => { //uat
       provider.getToken(appConfig.clientId).then((token: any) => { //acu
         this.setState({ accessToken: token }, async () => {
