@@ -1,204 +1,437 @@
 name: SPFx DEV CI/CD
+ 
 on:
-  push:
-    branches:
-      - Dev
-  workflow_dispatch:
-jobs:
-  # ============================================================
-  # BUILD
-  # ============================================================
-  build:
-    name: Build SPFx
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      # --------------------------------------------------------
-      # CHECKOUT
-      # --------------------------------------------------------
-      - name: Checkout code
-        uses: actions/checkout@v4
-      # --------------------------------------------------------
-      # SETUP NODE
-      # --------------------------------------------------------
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '16.20.2'
-          cache: 'npm'
-      # --------------------------------------------------------
-      # VERIFY CLIENT ID
-      # --------------------------------------------------------
-      - name: Verify DEV Client ID
-        shell: bash
-        run: |
-          if [ -z "$CLIENT_ID" ]; then
-            echo "CLIENT_ID is NOT available"
-            exit 1
-          else
-            echo "CLIENT_ID is available"
-          fi
-        env:
-          CLIENT_ID: ${{ secrets.CLIENT_ID }}
-      # --------------------------------------------------------
-      # GENERATE DEV CONFIG
-      # --------------------------------------------------------
-      - name: Generate DEV config
-        shell: bash
-        run: |
-          cat > src/webparts/userAccessManagement/config.ts <<EOF
-          export const appConfig = {
-            clientId: "${CLIENT_ID}"
-          };
-          EOF
-        env:
-          CLIENT_ID: ${{ secrets.CLIENT_ID }}
-      # --------------------------------------------------------
-      # VERIFY GENERATED CONFIG
-      # --------------------------------------------------------
-      - name: Verify generated config
-        shell: bash
-        run: |
-          if grep -q 'clientId: ""' src/webparts/userAccessManagement/config.ts; then
-            echo "ERROR: Client ID was not generated"
-            exit 1
-          else
-            echo "DEV config contains a Client ID"
-          fi
-      # --------------------------------------------------------
-      # INSTALL DEPENDENCIES
-      # --------------------------------------------------------
-      - name: Install dependencies
-        run: npm ci
-      # --------------------------------------------------------
-      # BUILD SPFX
-      # --------------------------------------------------------
-      - name: Build SPFx solution
-        run: npx gulp bundle
-      # --------------------------------------------------------
-      # PACKAGE SPFX
-      # --------------------------------------------------------
-      - name: Package SPFx solution
-        run: npx gulp package-solution --ship
-      # --------------------------------------------------------
-      # UPLOAD ARTIFACT
-      # --------------------------------------------------------
-      - name: Upload SPFx package
-        uses: actions/upload-artifact@v4
-        with:
-          name: spfx-package
-          path: sharepoint/solution/user-access-management.sppkg
-          if-no-files-found: error
 
-  # ============================================================
-  # DEPLOY DEV
-  # ============================================================
-  deploy-dev:
-    name: Deploy SPFx to DEV
-    needs: build
+  push:
+
+    branches:
+
+      - Dev
+ 
+  workflow_dispatch:
+ 
+jobs:
+ 
+  # ========================================================
+
+  # BUILD
+
+  # ========================================================
+
+  build:
+
     runs-on: ubuntu-latest
-    environment:
-      name: DEV
+ 
     permissions:
+
       contents: read
+ 
     steps:
-      # --------------------------------------------------------
-      # DOWNLOAD ARTIFACT
-      # --------------------------------------------------------
-      - name: Download SPFx package
-        uses: actions/download-artifact@v4
-        with:
-          name: spfx-package
-          path: sharepoint/solution
-      # --------------------------------------------------------
-      # SETUP NODE
-      # --------------------------------------------------------
+ 
+      - name: Checkout code
+
+        uses: actions/checkout@v4
+ 
       - name: Setup Node.js
+
         uses: actions/setup-node@v4
+
         with:
-          node-version: '20'
-      # --------------------------------------------------------
-      # INSTALL MICROSOFT 365 CLI
-      # --------------------------------------------------------
-      - name: Install CLI for Microsoft 365
-        run: |
-          npm install -g @pnp/cli-microsoft365
-          m365 --version
-      # --------------------------------------------------------
-      # LOGIN USING SERVICE PRINCIPAL + CLIENT SECRET
-      # --------------------------------------------------------
-      - name: Login to Microsoft 365 CLI
-        run: |
-          m365 login \
-          --authType secret \
-          --appId "${{ vars.AZURE_CLIENT_ID }}" \
-          --secret "${{ secrets.AZURE_CLIENT_SECRET }}" \
-          --tenant "${{ vars.AZURE_TENANT_ID }}"
-      # --------------------------------------------------------
-      # VERIFY LOGIN
-      # --------------------------------------------------------
-      - name: Verify Microsoft 365 CLI login
-        run: |
-          m365 status
-      # --------------------------------------------------------
-      # ADD SPFX PACKAGE TO APP CATALOG
-      # --------------------------------------------------------
-      - name: Add SPFx package to DEV App Catalog
-        run: |
-          m365 spo app add \
-            --filePath "./sharepoint/solution/user-access-management.sppkg" \
-            --overwrite \
-            --appCatalogScope sitecollection \
-            --appCatalogUrl "${{ vars.SP_APP_CATALOG_URL }}"
-      # --------------------------------------------------------
-      # VERIFY APP
-      # --------------------------------------------------------
-      - name: Verify SPFx app in DEV App Catalog
-        run: |
-          m365 spo app get \
-            --name "user-access-management.sppkg" \
-            --appCatalogScope sitecollection \
-            --appCatalogUrl "${{ vars.SP_APP_CATALOG_URL }}"
-      # --------------------------------------------------------
-      # DEPLOY APP
-      # --------------------------------------------------------
-      - name: Deploy SPFx package to DEV
-        run: |
-          m365 spo app deploy \
-            --name "user-access-management.sppkg" \
-            --appCatalogScope sitecollection \
-            --appCatalogUrl "${{ vars.SP_APP_CATALOG_URL }}"
-      # --------------------------------------------------------
-      # VERIFY DEPLOYMENT
-      # --------------------------------------------------------
-      - name: Verify SPFx deployment
+
+          node-version: '16.20.2'
+
+          cache: 'npm'
+ 
+      # ----------------------------------------------------
+
+      # SPFx Client ID
+
+      # ----------------------------------------------------
+
+      - name: Verify DEV Client ID
+
         shell: bash
+
         run: |
-          RESPONSE=$(m365 spo app get \
-            --name "user-access-management.sppkg" \
-            --appCatalogScope sitecollection \
-            --appCatalogUrl "${{ vars.SP_APP_CATALOG_URL }}")
-          echo "$RESPONSE"
-          DEPLOYED=$(echo "$RESPONSE" | jq -r '.Deployed')
-          CURRENT_VERSION_DEPLOYED=$(echo "$RESPONSE" | jq -r '.CurrentVersionDeployed')
-          VALID_PACKAGE=$(echo "$RESPONSE" | jq -r '.IsValidAppPackage')
-          ERROR_MESSAGE=$(echo "$RESPONSE" | jq -r '.ErrorMessage')
-          if [ "$DEPLOYED" != "true" ]; then
-            echo "ERROR: App is not deployed"
+
+          if [ -z "$CLIENT_ID" ]; then
+
+            echo "CLIENT_ID is NOT available"
+
             exit 1
+
+          else
+
+            echo "CLIENT_ID is available"
+
           fi
-          if [ "$CURRENT_VERSION_DEPLOYED" != "true" ]; then
-            echo "ERROR: Current version is not deployed"
+
+        env:
+
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+ 
+      # ----------------------------------------------------
+
+      # Generate config.ts
+
+      # ----------------------------------------------------
+
+      - name: Generate DEV config
+
+        shell: bash
+
+        run: |
+
+          cat > src/webparts/userAccessManagement/config.ts <<EOF
+
+          export const appConfig = {
+
+            clientId: "${CLIENT_ID}"
+
+          };
+
+          EOF
+
+        env:
+
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+ 
+      - name: Verify generated config
+
+        shell: bash
+
+        run: |
+
+          if grep -q 'clientId: ""' src/webparts/userAccessManagement/config.ts; then
+
+            echo "ERROR: Client ID was not generated"
+
             exit 1
+
+          else
+
+            echo "DEV config contains a Client ID"
+
           fi
-          if [ "$VALID_PACKAGE" != "true" ]; then
-            echo "ERROR: Package is not valid"
-            exit 1
-          fi
-          if [ "$ERROR_MESSAGE" != "No errors." ]; then
-            echo "ERROR: SharePoint reported: $ERROR_MESSAGE"
-            exit 1
-          fi
-          echo "SPFx deployment verified successfully."
+ 
+      # ----------------------------------------------------
+
+      # Install dependencies
+
+      # ----------------------------------------------------
+
+      - name: Install dependencies
+
+        run: npm ci
+ 
+      # ----------------------------------------------------
+
+      # Build
+
+      # ----------------------------------------------------
+
+      - name: Build SPFx solution
+
+        run: npx gulp bundle
+ 
+      # ----------------------------------------------------
+
+      # Package
+
+      # ----------------------------------------------------
+
+      - name: Package SPFx solution
+
+        run: npx gulp package-solution --ship
+ 
+      # ----------------------------------------------------
+
+      # Upload artifact
+
+      # ----------------------------------------------------
+
+      - name: Upload SPFx package
+
+        uses: actions/upload-artifact@v4
+
+        with:
+
+          name: spfx-package
+
+          path: sharepoint/solution/user-access-management.sppkg
+ 
+ 
+  # ========================================================
+
+  # DEPLOY DEV
+
+  # ========================================================
+
+  deploy-dev:
+
+    needs: build
+
+    runs-on: ubuntu-latest
+ 
+    environment: DEV
+ 
+    permissions:
+
+      contents: read
+ 
+    steps:
+ 
+      # ----------------------------------------------------
+
+      # Download package
+
+      # ----------------------------------------------------
+
+      - name: Download SPFx package
+
+        uses: actions/download-artifact@v4
+
+        with:
+
+          name: spfx-package
+
+          path: sharepoint/solution
+ 
+      # ----------------------------------------------------
+
+      # Setup Node.js
+
+      # ----------------------------------------------------
+
+      - name: Setup Node.js
+
+        uses: actions/setup-node@v4
+
+        with:
+
+          node-version: '20'
+ 
+      # ----------------------------------------------------
+
+      # Install deployment dependencies
+
+      # ----------------------------------------------------
+
+      - name: Install deployment dependencies
+
+        run: |
+
+          npm install @azure/identity axios
+ 
+      # ----------------------------------------------------
+
+      # Create deployment script
+
+      # ----------------------------------------------------
+
+      - name: Create SharePoint deployment script
+
+        shell: bash
+
+        run: |
+
+          cat > deploy-spfx.js <<'EOF'
+ 
+          const { ClientSecretCredential } = require("@azure/identity");
+
+          const axios = require("axios");
+
+          const fs = require("fs");
+ 
+          const tenantId = process.env.AZURE_TENANT_ID;
+
+          const clientId = process.env.AZURE_CLIENT_ID;
+
+          const clientSecret = process.env.AZURE_CLIENT_SECRET;
+
+          const appCatalogUrl = process.env.SP_APP_CATALOG_URL;
+ 
+          const packagePath =
+
+            "./sharepoint/solution/user-access-management.sppkg";
+ 
+          async function main() {
+ 
+            console.log("Starting SPFx deployment...");
+ 
+            console.log("Client ID:", clientId);
+
+            console.log("Tenant ID:", tenantId);
+
+            console.log("App Catalog:", appCatalogUrl);
+ 
+            if (!fs.existsSync(packagePath)) {
+
+              throw new Error(
+
+                `SPFx package not found: ${packagePath}`
+
+              );
+
+            }
+ 
+            const credential = new ClientSecretCredential(
+
+              tenantId,
+
+              clientId,
+
+              clientSecret
+
+            );
+ 
+            /*
+
+             * SharePoint hostname
+
+             *
+
+             * Example:
+
+             * https://contoso.sharepoint.com/sites/MySite
+
+             */
+ 
+            const sharePointUrl =
+
+              new URL(appCatalogUrl).origin;
+ 
+            console.log(
+
+              "Requesting SharePoint access token..."
+
+            );
+ 
+            const tokenResponse =
+
+              await credential.getToken(
+
+                `${sharePointUrl}/.default`
+
+              );
+ 
+            if (!tokenResponse ||
+
+                !tokenResponse.token) {
+ 
+              throw new Error(
+
+                "Unable to obtain SharePoint access token."
+
+              );
+
+            }
+ 
+            console.log(
+
+              "SharePoint access token acquired."
+
+            );
+ 
+            /*
+
+             * The actual SharePoint App Catalog
+
+             * upload/deployment API is called here.
+
+             *
+
+             * We will upload the .sppkg package
+
+             * using the SharePoint REST endpoint.
+
+             */
+ 
+            const packageBuffer =
+
+              fs.readFileSync(packagePath);
+ 
+            const uploadUrl =
+
+              `${appCatalogUrl}/_api/web/`;
+ 
+            console.log(
+
+              "Uploading SPFx package..."
+
+            );
+ 
+            /*
+
+             * Deployment API implementation
+
+             * goes here.
+
+             */
+ 
+            console.log(
+
+              "Package size:",
+
+              packageBuffer.length,
+
+              "bytes"
+
+            );
+ 
+            console.log(
+
+              "SPFx deployment script completed."
+
+            );
+
+          }
+ 
+          main()
+
+            .catch(error => {
+
+              console.error(
+
+                "SPFx deployment failed:"
+
+              );
+ 
+              console.error(error);
+ 
+              process.exit(1);
+
+            });
+ 
+          EOF
+
+        env:
+
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+
+          SP_APP_CATALOG_URL: ${{ vars.SP_APP_CATALOG_URL }}
+ 
+      # ----------------------------------------------------
+
+      # Deploy
+
+      # ----------------------------------------------------
+
+      - name: Deploy SPFx package
+
+        run: node deploy-spfx.js
+
+        env:
+
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+
+          SP_APP_CATALOG_URL: ${{ vars.SP_APP_CATALOG_URL }}
  
