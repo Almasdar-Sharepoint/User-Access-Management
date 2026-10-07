@@ -122,7 +122,9 @@ jobs:
       # INSTALL MICROSOFT 365 CLI
       # --------------------------------------------------------
       - name: Install CLI for Microsoft 365
-        run: npm install -g @pnp/cli-microsoft365
+        run: |
+          npm install -g @pnp/cli-microsoft365
+          m365 --version
       # --------------------------------------------------------
       # LOGIN USING SERVICE PRINCIPAL + CLIENT SECRET
       # --------------------------------------------------------
