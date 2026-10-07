@@ -1,29 +1,35 @@
 name: SPFx DEV CI/CD
-
 on:
   push:
     branches:
       - Dev
   workflow_dispatch:
-
 jobs:
+  # ============================================================
+  # BUILD
+  # ============================================================
   build:
+    name: Build SPFx
     runs-on: ubuntu-latest
-
     permissions:
-      id-token: write
       contents: read
-
     steps:
+      # --------------------------------------------------------
+      # CHECKOUT
+      # --------------------------------------------------------
       - name: Checkout code
         uses: actions/checkout@v4
-
+      # --------------------------------------------------------
+      # SETUP NODE
+      # --------------------------------------------------------
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '16.20.2'
           cache: 'npm'
-
+      # --------------------------------------------------------
+      # VERIFY CLIENT ID
+      # --------------------------------------------------------
       - name: Verify DEV Client ID
         shell: bash
         run: |
@@ -35,7 +41,9 @@ jobs:
           fi
         env:
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
-
+      # --------------------------------------------------------
+      # GENERATE DEV CONFIG
+      # --------------------------------------------------------
       - name: Generate DEV config
         shell: bash
         run: |
@@ -46,7 +54,9 @@ jobs:
           EOF
         env:
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
-
+      # --------------------------------------------------------
+      # VERIFY GENERATED CONFIG
+      # --------------------------------------------------------
       - name: Verify generated config
         shell: bash
         run: |
@@ -56,64 +66,82 @@ jobs:
           else
             echo "DEV config contains a Client ID"
           fi
-
+      # --------------------------------------------------------
+      # INSTALL DEPENDENCIES
+      # --------------------------------------------------------
       - name: Install dependencies
         run: npm ci
-
+      # --------------------------------------------------------
+      # BUILD SPFX
+      # --------------------------------------------------------
       - name: Build SPFx solution
         run: npx gulp bundle
-
+      # --------------------------------------------------------
+      # PACKAGE SPFX
+      # --------------------------------------------------------
       - name: Package SPFx solution
         run: npx gulp package-solution --ship
-
+      # --------------------------------------------------------
+      # UPLOAD ARTIFACT
+      # --------------------------------------------------------
       - name: Upload SPFx package
         uses: actions/upload-artifact@v4
         with:
           name: spfx-package
           path: sharepoint/solution/user-access-management.sppkg
+          if-no-files-found: error
 
+  # ============================================================
+  # DEPLOY DEV
+  # ============================================================
   deploy-dev:
+    name: Deploy SPFx to DEV
     needs: build
     runs-on: ubuntu-latest
-    environment: DEV
-
+    environment:
+      name: DEV
     permissions:
-      id-token: write
       contents: read
-
     steps:
+      # --------------------------------------------------------
+      # DOWNLOAD ARTIFACT
+      # --------------------------------------------------------
       - name: Download SPFx package
         uses: actions/download-artifact@v4
         with:
           name: spfx-package
           path: sharepoint/solution
-          
-      - name: Setup Node.js 20 for Microsoft 365 CLI
+      # --------------------------------------------------------
+      # SETUP NODE
+      # --------------------------------------------------------
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          client-id: ${{ vars.AZURE_CLIENT_ID }}
-          tenant-id: ${{ vars.AZURE_TENANT_ID }}
-          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-
+      # --------------------------------------------------------
+      # INSTALL MICROSOFT 365 CLI
+      # --------------------------------------------------------
       - name: Install CLI for Microsoft 365
         run: npm install -g @pnp/cli-microsoft365
-
+      # --------------------------------------------------------
+      # LOGIN USING SERVICE PRINCIPAL + CLIENT SECRET
+      # --------------------------------------------------------
       - name: Login to Microsoft 365 CLI
         run: |
           m365 login \
-            --authType federatedIdentity \
+            --authType secret \
             --appId "${{ vars.AZURE_CLIENT_ID }}" \
+            --password "${{ secrets.AZURE_CLIENT_SECRET }}" \
             --tenant "${{ vars.AZURE_TENANT_ID }}"
-
+      # --------------------------------------------------------
+      # VERIFY LOGIN
+      # --------------------------------------------------------
       - name: Verify Microsoft 365 CLI login
         run: |
           m365 status
-
+      # --------------------------------------------------------
+      # ADD SPFX PACKAGE TO APP CATALOG
+      # --------------------------------------------------------
       - name: Add SPFx package to DEV App Catalog
         run: |
           m365 spo app add \
@@ -121,21 +149,27 @@ jobs:
             --overwrite \
             --appCatalogScope sitecollection \
             --appCatalogUrl "${{ vars.SP_APP_CATALOG_URL }}"
-
+      # --------------------------------------------------------
+      # VERIFY APP
+      # --------------------------------------------------------
       - name: Verify SPFx app in DEV App Catalog
         run: |
           m365 spo app get \
             --name "user-access-management.sppkg" \
             --appCatalogScope sitecollection \
             --appCatalogUrl "${{ vars.SP_APP_CATALOG_URL }}"
-
+      # --------------------------------------------------------
+      # DEPLOY APP
+      # --------------------------------------------------------
       - name: Deploy SPFx package to DEV
         run: |
           m365 spo app deploy \
             --name "user-access-management.sppkg" \
             --appCatalogScope sitecollection \
             --appCatalogUrl "${{ vars.SP_APP_CATALOG_URL }}"
-
+      # --------------------------------------------------------
+      # VERIFY DEPLOYMENT
+      # --------------------------------------------------------
       - name: Verify SPFx deployment
         shell: bash
         run: |
@@ -143,32 +177,26 @@ jobs:
             --name "user-access-management.sppkg" \
             --appCatalogScope sitecollection \
             --appCatalogUrl "${{ vars.SP_APP_CATALOG_URL }}")
-
           echo "$RESPONSE"
-
           DEPLOYED=$(echo "$RESPONSE" | jq -r '.Deployed')
           CURRENT_VERSION_DEPLOYED=$(echo "$RESPONSE" | jq -r '.CurrentVersionDeployed')
           VALID_PACKAGE=$(echo "$RESPONSE" | jq -r '.IsValidAppPackage')
           ERROR_MESSAGE=$(echo "$RESPONSE" | jq -r '.ErrorMessage')
-
           if [ "$DEPLOYED" != "true" ]; then
             echo "ERROR: App is not deployed"
             exit 1
           fi
-
           if [ "$CURRENT_VERSION_DEPLOYED" != "true" ]; then
             echo "ERROR: Current version is not deployed"
             exit 1
           fi
-
           if [ "$VALID_PACKAGE" != "true" ]; then
             echo "ERROR: Package is not valid"
             exit 1
           fi
-
           if [ "$ERROR_MESSAGE" != "No errors." ]; then
             echo "ERROR: SharePoint reported: $ERROR_MESSAGE"
             exit 1
           fi
-
           echo "SPFx deployment verified successfully."
+ 
