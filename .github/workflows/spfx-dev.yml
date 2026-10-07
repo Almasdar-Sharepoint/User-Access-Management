@@ -128,13 +128,9 @@ jobs:
       # --------------------------------------------------------
       # LOGIN USING SERVICE PRINCIPAL + CLIENT SECRET
       # --------------------------------------------------------
-      - name: Login to Microsoft 365 CLI
+      - name: Check Microsoft 365 CLI login options
         run: |
-          m365 login \
-            --authType secret \
-            --appId "${{ vars.AZURE_CLIENT_ID }}" \
-            --password "${{ secrets.AZURE_CLIENT_SECRET }}" \
-            --tenant "${{ vars.AZURE_TENANT_ID }}"
+          m365 login --help
       # --------------------------------------------------------
       # VERIFY LOGIN
       # --------------------------------------------------------
