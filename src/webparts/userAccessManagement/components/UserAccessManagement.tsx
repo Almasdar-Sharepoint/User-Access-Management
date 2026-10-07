@@ -1,4 +1,5 @@
 import * as React from "react";
+import { appConfig } from "../config";
 import {
   IUserAccessManagementProps,
   IUserAccessManagementState,
@@ -186,8 +187,9 @@ export default class UserAccessManagement extends React.Component<
   public async componentDidMount() {
 
     await this.props.context.aadTokenProviderFactory.getTokenProvider().then((provider: any) => {
+      // adding additional line for testing
       // provider.getToken("b9fd59c2-03b9-4540-9c4d-1a255a3889ea").then((token: any) => { //uat
-      provider.getToken("e2c53e44-d47e-4d8d-8a24-fe222074c7d3").then((token: any) => { //acu
+      provider.getToken(appConfig.clientId).then((token: any) => { //acu
         this.setState({ accessToken: token }, async () => {
           //console.log(token, "token form directry before getting Roles")
 
